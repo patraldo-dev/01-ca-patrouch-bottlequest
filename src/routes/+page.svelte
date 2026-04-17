@@ -67,11 +67,6 @@
 
             launchedBottles.push([bottle.current_lat, bottle.current_lon]);
 
-            if (bottle.positions?.length > 1) {
-                const coords = bottle.positions.map(p => [p.lat, p.lon]);
-                L.polyline(coords, { color: '#3b82f6', weight: 2, opacity: 0.4 }).addTo(map);
-            }
-
             const colors = {
                 beached: '#f59e0b',
                 found: '#c084fc',
@@ -80,13 +75,41 @@
                 sunk: '#ef4444'
             };
 
-            const marker = L.circleMarker([bottle.current_lat, bottle.current_lon], {
-                radius: 10,
-                fillColor: colors[bottle.status] || '#3b82f6',
-                fillOpacity: 0.9,
-                color: '#fff',
-                weight: 2
-            }).addTo(map);
+            // Animate trail
+            if (bottle.positions?.length > 1) {
+                const coords = bottle.positions.map(p => [p.lat, p.lon]);
+                const trailLine = L.polyline([], { color: '#3b82f6', weight: 2.5, opacity: 0.6 }).addTo(map);
+                const animMarker = L.circleMarker(coords[0], {
+                    radius: 8,
+                    fillColor: colors[bottle.status] || '#3b82f6',
+                    fillOpacity: 0.9,
+                    color: '#fff',
+                    weight: 2
+                }).addTo(map);
+
+                // Show static full trail faintly
+                L.polyline(coords, { color: '#3b82f6', weight: 1.5, opacity: 0.15, dashArray: '4 8' }).addTo(map);
+
+                // Animate the bright trail + marker
+                let step = 0;
+                const interval = setInterval(() => {
+                    step++;
+                    if (step >= coords.length) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    trailLine.addLatLng(coords[step]);
+                    animMarker.setLatLng(coords[step]);
+                }, 600);
+            } else {
+                L.circleMarker([bottle.current_lat, bottle.current_lon], {
+                    radius: 10,
+                    fillColor: colors[bottle.status] || '#3b82f6',
+                    fillOpacity: 0.9,
+                    color: '#fff',
+                    weight: 2
+                }).addTo(map);
+            }
 
             const author = bottle.display_name || bottle.username || 'Anonymous';
             marker.bindPopup(`
