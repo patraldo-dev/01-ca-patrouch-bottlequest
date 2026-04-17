@@ -1,7 +1,7 @@
 <script>
     import { browser } from '$app/environment';
-    import { children } from 'svelte';
 
+    let { children } = $props();
     let dark = $state(true);
 
     function toggleTheme() {
