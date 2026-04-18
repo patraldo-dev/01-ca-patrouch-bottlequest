@@ -149,7 +149,11 @@
     }
 
     // Player markers
-    for (const player of data.players || []) {
+    const playerMarkers = [];
+    const players = data.players || [];
+    console.log('Players data:', players.length, players);
+    for (const player of players) {
+      playerMarkers.push([player.lat, player.lon]);
       const icon = L.divIcon({
         className: 'player-marker',
         html: `<div style="background:${player.team_color || '#3b82f6'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer" title="${player.display_name || player.username}">${player.team_id === 'team-alpha' ? '🧭' : '🐧'}</div>`,
@@ -167,6 +171,17 @@
           </div>
         </div>
       `);
+      // Label with permanent tooltip
+      pm.bindTooltip(player.display_name || player.username, {
+        permanent: true, direction: 'top', offset: [0, -16],
+        className: 'player-label'
+      });
+    }
+
+    // Fit bounds to include bottles AND players
+    const allPoints = [...launchedBottles, ...playerMarkers];
+    if (allPoints.length) {
+      map.fitBounds(L.latLngBounds(allPoints).pad(0.3));
     }
   });
 </script>

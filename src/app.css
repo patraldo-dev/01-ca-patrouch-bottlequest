@@ -144,3 +144,4 @@ html[data-theme="light"] .navbar {
     #ocean-map { height: 50vh; }
 }
 
+\n.player-label {\n  background: rgba(9,9,11,0.8) !important;\n  color: #fff !important;\n  border: none !important;\n  border-radius: 4px !important;\n  padding: 2px 6px !important;\n  font-size: 11px !important;\n  font-family: Inter, sans-serif !important;\n  font-weight: 600 !important;\n  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;\n}\n.player-label::before { display: none !important; }
