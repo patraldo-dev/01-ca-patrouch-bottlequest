@@ -12,7 +12,7 @@
 		"nodejs_als"
 	],
 	"assets": {
-		"binding": "ASSETS",
+		"binding": "STATIC",
 		"directory": ".svelte-kit/cloudflare"
 	},
 	"observability": {
