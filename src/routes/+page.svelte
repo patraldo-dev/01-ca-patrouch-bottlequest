@@ -277,7 +277,7 @@
               <div class="detail-row"><span>📍 Port</span><span>{player.port_name || 'Unknown'}</span></div>
               <div class="detail-row"><span>🌐 Position</span><span class="mono">{formatCoords(player.lat, player.lon)}</span></div>
               {#if player.nearestDist !== null}
-                <button class="bottle-link" onclick|stopPropagation={() => flyToBottle(player.nearestBottle)}>
+                <button class="bottle-link" onclick={(e) => { e.stopPropagation(); flyToBottle(player.nearestBottle); }}>
                   🍾 Nearest bottle: {player.nearestDist.toFixed(0)} km
                 </button>
               {/if}
