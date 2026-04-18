@@ -6,6 +6,10 @@
 				try {
 					const theme = document.cookie.match(/(?:^|; )theme=([^;]+)/)?.pop() || localStorage.getItem('theme') || 'dark';
 					document.documentElement.setAttribute('data-theme', theme);
+					if (localStorage.getItem('lang_switching') === '1') {
+						document.documentElement.classList.add('lang-switching');
+						localStorage.removeItem('lang_switching');
+					}
 				} catch(e) {}
 			})();
 		</script>

@@ -1,8 +1,12 @@
 <script>
     import { browser } from '$app/environment';
+    import { t, locale, getLocale } from '$lib/i18n';
+    import { get } from 'svelte/store';
+    import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 
-    let { children } = $props();
+    let { children, data } = $props();
     let dark = $state(true);
+    let currentLocale = $state(data?.serverLocale || getLocale());
 
     function toggleTheme() {
         dark = !dark;
@@ -24,8 +28,9 @@
     <div class="container">
         <a href="/" class="nav-brand">🍾 Bottle Quest</a>
         <div class="nav-links">
-            <a href="/">Map</a>
-            <a href="/about">About</a>
+            <a href="/">{$t('nav.map')}</a>
+            <a href="/about">{$t('nav.about')}</a>
+            <LanguageSwitcher serverLocale={currentLocale} />
             <button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
                 {dark ? '☀️' : '🌙'}
             </button>
@@ -37,7 +42,7 @@
 
 <footer class="footer">
     <div class="container">
-        <p>Bottle Quest · <a href="https://patrouch.ca">Patrouch.ca</a> · Ocean currents & drift simulation</p>
+        <p>{$t('footer.text')} · <a href="https://patrouch.ca">{$t('footer.patrouch')}</a></p>
     </div>
 </footer>
 

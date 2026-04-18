@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { t, getLocale } from '$lib/i18n';
 
   let { data } = $props();
 
@@ -228,8 +229,8 @@
 </svelte:head>
 
 <section class="hero">
-  <h1>🍾 Bottle <span>Quest</span></h1>
-  <p>Launch bottles into the Pacific Ocean and track their drift using real ocean current data.</p>
+  <h1>🍾 {$t('hero.title')} <span>Quest</span></h1>
+  <p>{$t('hero.subtitle')}</p>
 </section>
 
 <!-- Stats -->
@@ -237,15 +238,15 @@
   <div class="stats-bar">
     <div class="stat-item">
       <span class="stat-num">{data.bottles.length}</span>
-      <span class="stat-label">Active bottles</span>
+      <span class="stat-label">{$t('stats.active')}</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">{data.bottles.filter(b => b.status === 'beached').length}</span>
-      <span class="stat-label">Beached</span>
+      <span class="stat-label">{$t('stats.beached')}</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">{data.bottles.filter(b => b.status === 'found').length}</span>
-      <span class="stat-label">Found</span>
+      <span class="stat-label">{$t('stats.found')}</span>
     </div>
   </div>
 </div>
@@ -260,7 +261,7 @@
 {#if playersWithDist.length}
   <section class="players-section">
     <div class="container">
-      <h2 class="section-title">Players</h2>
+      <h2 class="section-title">{$t('players.title')}</h2>
       <div class="players-grid">
         {#each playersWithDist as player}
           <button class="player-card" onclick={() => flyToPlayer(player)}>
@@ -274,11 +275,11 @@
               </div>
             </div>
             <div class="player-details">
-              <div class="detail-row"><span>📍 Port</span><span>{player.port_name || 'Unknown'}</span></div>
-              <div class="detail-row"><span>🌐 Position</span><span class="mono">{formatCoords(player.lat, player.lon)}</span></div>
+              <div class="detail-row"><span>📍 {$t('players.port')}</span><span>{player.port_name || 'Unknown'}</span></div>
+              <div class="detail-row"><span>🌐 {$t('players.position')}</span><span class="mono">{formatCoords(player.lat, player.lon)}</span></div>
               {#if player.nearestDist !== null}
                 <button class="bottle-link" onclick={(e) => { e.stopPropagation(); flyToBottle(player.nearestBottle); }}>
-                  🍾 Nearest bottle: {player.nearestDist.toFixed(0)} km
+                  🍾 {$t('players.nearest')}: {player.nearestDist.toFixed(0)} km
                 </button>
               {/if}
             </div>
@@ -293,7 +294,7 @@
 {#if data.bottles.length}
   <section class="bottles-section">
     <div class="container">
-      <h2 class="section-title">Active Bottles</h2>
+      <h2 class="section-title">{$t('bottles.title')}</h2>
       <div class="bottles-grid">
         {#each data.bottles as bottle}
           <button
@@ -305,8 +306,8 @@
               <span class="bottle-icon">{bottle.status === 'found' ? '📬' : bottle.status === 'beached' ? '🏖️' : '🍾'}</span>
               <span class="status-dot status-{bottle.status}"></span>
             </div>
-            <h3>{bottle.title || 'Untitled'}</h3>
-            <p class="card-meta">{bottle.display_name || bottle.username || 'Anonymous'}</p>
+            <h3>{bottle.title || $t('bottles.untitled')}</h3>
+            <p class="card-meta">{bottle.display_name || bottle.username || $t('bottles.anonymous')}</p>
             {#if activeBottleData?.id === bottle.id}
               <div class="card-detail">
                 {#if bottle.launched_at}
