@@ -299,7 +299,7 @@
           <button
             class="bottle-card"
             class:active={activeBottle?.id === bottle.id}
-            on:click={() => selectBottle(bottle)}
+            onclick={() => selectBottle(bottle)}
           >
             <div class="card-header">
               <span class="bottle-icon">{bottle.status === 'found' ? '📬' : bottle.status === 'beached' ? '🏖️' : '🍾'}</span>
