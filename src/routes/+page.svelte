@@ -233,6 +233,24 @@
 {/if}
 
 <style>
+/* Map */
+.map-section {
+  margin: 1.5rem 0 2rem;
+}
+
+.map-wrap {
+  height: 500px;        /* or 60vh, 700px, etc. */
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+#ocean-map {
+  height: 100%;
+  width: 100%;
+  background: #f9fafb;
+}
+
     /* Stats */
     .stats-bar {
         display: flex;
