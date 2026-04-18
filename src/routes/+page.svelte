@@ -28,6 +28,38 @@
     return `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`;
   }
 
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  let mapRef = $state(null);
+
+  let playersWithDist = $derived(
+    (data.players || []).map(p => {
+      let nearestBottle = null;
+      let nearestDist = Infinity;
+      for (const b of data.bottles || []) {
+        if (b.current_lat && b.current_lon) {
+          const d = haversine(p.lat, p.lon, b.current_lat, b.current_lon);
+          if (d < nearestDist) { nearestDist = d; nearestBottle = b; }
+        }
+      }
+      return { ...p, nearestBottle, nearestDist: nearestDist === Infinity ? null : nearestDist };
+    })
+  );
+
+  function flyToPlayer(player) {
+    if (mapRef) mapRef.flyTo([player.lat, player.lon], 6, { duration: 1.5 });
+  }
+
+  function flyToBottle(bottle) {
+    if (mapRef && bottle.current_lat) mapRef.flyTo([bottle.current_lat, bottle.current_lon], 8, { duration: 1.5 });
+  }
+
   onMount(async () => {
     if (!browser) return;
 
@@ -43,6 +75,7 @@
       zoomControl: true,
       attributionControl: false
     });
+    mapRef = map;
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 18
@@ -223,6 +256,39 @@
   </div>
 </section>
 
+<!-- Players -->
+{#if playersWithDist.length}
+  <section class="players-section">
+    <div class="container">
+      <h2 class="section-title">Players</h2>
+      <div class="players-grid">
+        {#each playersWithDist as player}
+          <button class="player-card" onclick={() => flyToPlayer(player)}>
+            <div class="player-header">
+              <div class="player-avatar" style="background:{player.team_color || '#3b82f6'}">
+                {player.team_id === 'team-alpha' ? '🧭' : '🐧'}
+              </div>
+              <div class="player-info">
+                <h3>{player.display_name || player.username}</h3>
+                <span class="team-badge" style="background:{player.team_color || '#3b82f6'}22;color:{player.team_color || '#3b82f6'}">{player.team_name || 'Free Agent'}</span>
+              </div>
+            </div>
+            <div class="player-details">
+              <div class="detail-row"><span>📍 Port</span><span>{player.port_name || 'Unknown'}</span></div>
+              <div class="detail-row"><span>🌐 Position</span><span class="mono">{formatCoords(player.lat, player.lon)}</span></div>
+              {#if player.nearestDist !== null}
+                <button class="bottle-link" onclick|stopPropagation={() => flyToBottle(player.nearestBottle)}>
+                  🍾 Nearest bottle: {player.nearestDist.toFixed(0)} km
+                </button>
+              {/if}
+            </div>
+          </button>
+        {/each}
+      </div>
+    </div>
+  </section>
+{/if}
+
 <!-- Bottle list -->
 {#if data.bottles.length}
   <section class="bottles-section">
@@ -346,5 +412,38 @@
         .stats-bar { gap: 1rem; }
         .stat-num { font-size: 1.5rem; }
         .bottles-grid { grid-template-columns: 1fr; }
+        .players-grid { grid-template-columns: 1fr; }
     }
+
+    /* Players section */
+    .players-section { padding: 2rem 1.5rem 0; }
+    .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .player-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      width: 100%;
+    }
+    .player-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
+    .player-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .player-avatar {
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.3); flex-shrink: 0;
+    }
+    .player-info h3 { font-family: var(--font-heading); font-size: 1.05rem; margin: 0 0 0.2rem; }
+    .team-badge { font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+    .player-details { padding-top: 0.5rem; border-top: 1px solid var(--border); }
+    .bottle-link {
+      margin-top: 0.5rem; background: var(--accent); color: #fff; border: none;
+      padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600; width: 100%; text-align: center;
+    }
+    .bottle-link:hover { opacity: 0.85; }
 </style>
