@@ -20,5 +20,19 @@ export async function load({ platform }) {
         console.error('Bottles load error:', e);
     }
 
-    return { bottles };
+    // Fetch players with team info
+    let players = [];
+    try {
+        const { results: pr } = await db.prepare(`
+            SELECT p.*, t.name as team_name, t.color as team_color, pt.name as port_name
+            FROM bq_players p
+            LEFT JOIN bq_teams t ON p.team_id = t.id
+            LEFT JOIN bq_ports pt ON p.port_id = pt.id
+        `).all();
+        players = pr || [];
+    } catch (e) {
+        console.error('Players load error:', e);
+    }
+
+    return { bottles, players };
 }
