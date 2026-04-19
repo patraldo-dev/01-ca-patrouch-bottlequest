@@ -3,8 +3,8 @@
 </script>
 
 <svelte:head>
-    <title>About — Bottle Quest</title>
-    <meta name="description" content="Learn how Bottle Quest works — ocean drift simulation, real currents, and creative writing across the Pacific." />
+    <title>About — Bottle Booty</title>
+    <meta name="description" content="Learn how Bottle Booty works — ocean drift simulation, real currents, and creative writing across the Pacific." />
 </svelte:head>
 
 <section class="about-page">

@@ -29,7 +29,7 @@
 
 <nav class="navbar" aria-label="{$t('nav.label')}">
     <div class="container">
-        <a href="/" class="nav-brand">🍾 Bottle Quest</a>
+        <a href="/" class="nav-brand">🍾 Bottle Booty</a>
         <button class="hamburger" onclick={() => mobileOpen = !mobileOpen} aria-label="Menu" aria-expanded={mobileOpen}>
             <span class="ham-line"></span><span class="ham-line"></span><span class="ham-line"></span>
         </button>

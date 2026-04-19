@@ -332,7 +332,7 @@
 </script>
 
 <svelte:head>
-  <title>Bottle Quest — Track ocean drift</title>
+  <title>Bottle Booty — Track ocean drift</title>
   <meta name="description" content="Launch bottles into the Pacific Ocean and track their drift using real ocean current data." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
