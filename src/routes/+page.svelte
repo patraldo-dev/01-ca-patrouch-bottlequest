@@ -619,33 +619,7 @@
     .kw-match-info { color: var(--muted); font-size: 0.78rem; }
     .bottles-section { padding: 2rem 0 4rem; }
     .section-title { font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent); margin-bottom: 1.25rem; }
-    .bottles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
-
-    .bottle-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 1rem 1.25rem;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        color: var(--fg);
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .bottle-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
-    .bottle-card.active { border-color: var(--accent); }
-    .bottle-card h3 { font-family: var(--font-heading); font-size: 1.05rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-meta { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
-
-    .card-header { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
-    .card-info { min-width: 0; flex: 1; }
-    .card-info h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bottle-icon { font-size: 1.5rem; }
+    .bottles-grid { display: flex; flex-direction: column; gap: 0.5rem; }
 
     .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     .status-dot.status-launched { background: #ef4444; }
