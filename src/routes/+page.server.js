@@ -41,7 +41,7 @@ export async function load({ platform }) {
         `).all();
         players = pr || [];
         const { results: pip } = await db.prepare(`
-            SELECT COUNT(DISTINCT player_id) as cnt FROM bq_moves WHERE created_at > datetime('now', '-24 hours')
+            SELECT COUNT(*) as cnt FROM bq_players WHERE type = 'human'
         `).all();
         playersInPursuit = pip?.[0]?.cnt || 0;
     } catch (e) {
