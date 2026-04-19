@@ -528,8 +528,12 @@
             <span class="transfer-preview-amount transfer-receive">{transferAmount || 0} ⛽</span>
           </div>
           <div class="transfer-fee-row">
-            <span>Fee</span>
-            <span class="transfer-free">{$t('transfer.fee_free')}</span>
+            <span>🤖 Bank fee (3%)</span>
+            <span class="transfer-fee-amount">{transferAmount ? Math.ceil(transferAmount * 0.03) : 0} ⛽</span>
+          </div>
+          <div class="transfer-fee-row">
+            <span>{transferTarget.display_name || transferTarget.username} receives</span>
+            <span class="transfer-receive-final">{transferAmount ? transferAmount - Math.ceil(transferAmount * 0.03) : 0} ⛽</span>
           </div>
         </div>
         {#if transferMsg}
@@ -751,7 +755,8 @@
     .transfer-preview-amount { font-weight: 700; }
     .transfer-receive { color: #4ade80; }
     .transfer-fee-row { display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.82rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 0.5rem; }
-    .transfer-free { color: #4ade80; font-weight: 600; }
+    .transfer-fee-amount { color: #ef4444; font-weight: 600; }
+    .transfer-receive-final { color: #4ade80; font-weight: 700; }
     .transfer-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.85rem; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: opacity 0.2s; }
     .transfer-btn:hover:not(:disabled) { opacity: 0.9; }
     .transfer-btn:disabled { opacity: 0.4; cursor: not-allowed; }
