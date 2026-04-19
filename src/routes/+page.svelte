@@ -18,6 +18,8 @@
   let keywords = $state([]);
   let proposals = $state([]);
   let recentMatches = $state([]);
+  let poisonWords = $state([]);
+  let todayProposed = $state(false);
   let newKeyword = $state('');
   let proposing = $state(false);
   let proposalMsg = $state('');
@@ -106,7 +108,9 @@
         const refresh = await fetch('/api/keywords/proposals');
         if (refresh.ok) {
           const r = await refresh.json();
-          proposals = r.proposals || [];
+          recentMatches = r.matches || [];
+          poisonWords = r.poison_words || [];
+          todayProposed = r.today_proposed;
         }
       } else {
         proposalMsg = data.error || 'Error';
@@ -165,13 +169,14 @@
   onMount(async () => {
     if (!browser) return;
 
-    // Load proposals
+    // Load proposals data (matches + poison words, NOT pending proposals)
     try {
       const res = await fetch('/api/keywords/proposals');
       if (res.ok) {
         const data = await res.json();
-        proposals = data.proposals || [];
         recentMatches = data.matches || [];
+        poisonWords = data.poison_words || [];
+        todayProposed = data.today_proposed;
       }
     } catch {}
 
@@ -414,39 +419,35 @@
     <p class="keywords-desc">{$t('keywords.desc')}</p>
     <div class="kw-propose">
       <input type="text" class="kw-input" bind:value={newKeyword} placeholder={$t('keywords.placeholder')} maxlength="30" />
-      <button class="btn-propose" onclick={proposeKeyword} disabled={proposing || !newKeyword.trim()}>{$t('keywords.propose')}</button>
+      <button class="btn-propose" onclick={proposeKeyword} disabled={proposing || todayProposed || !newKeyword.trim()}>{$t('keywords.propose')}</button>
     </div>
     {#if proposalMsg}
       <p class="kw-msg" class:kw-success={proposalOk} class:kw-error={!proposalOk}>{proposalMsg}</p>
     {/if}
-    {#if proposals.length > 0}
-      <div class="kw-pool">
-        <h3 class="kw-pool-label">{$t('keywords.today_pool')} ({proposals.length})</h3>
+    {#if todayProposed && !proposalMsg}
+      <p class="kw-msg kw-success">{$t('keywords.already_proposed')}</p>
+    {/if}
+    {#if poisonWords.length > 0}
+      <div class="kw-poison">
+        <h3 class="kw-pool-label">☠️ {$t('keywords.poison')} ({poisonWords.length})</h3>
         <div class="keywords-grid" role="list">
-          {#each proposals as kw}
-            <div class="keyword-pill" class:kw-matched={kw.status === 'matched'} role="listitem">
-              <span class="kw-type">{kw.player_type === 'ai' ? '🤖' : '👤'}</span>
-              <span class="kw-word">{kw.word}</span>
-              {#if kw.status === 'matched'}
-                <span class="kw-badge">✓ +{kw.points_earned}</span>
-              {:else}
-                <span class="kw-badge kw-pending">⏳</span>
-              {/if}
-              <span class="kw-author">{kw.display_name || kw.username}</span>
+          {#each poisonWords as pw}
+            <div class="keyword-pill kw-poison-pill" role="listitem">
+              <span class="kw-word">{pw.word}</span>
+              <span class="kw-badge">+{pw.points_earned}</span>
             </div>
           {/each}
         </div>
       </div>
-    {:else}
-      <p class="keywords-empty">{$t('keywords.empty')}</p>
     {/if}
     {#if recentMatches.length > 0}
       <div class="kw-recent">
-        <h3 class="kw-pool-label">{$t('keywords.recent_matches')}</h3>
+        <h3 class="kw-pool-label">🎯 {$t('keywords.recent_matches')} ({recentMatches.length})</h3>
         {#each recentMatches as m}
           <div class="match-row">
             <span class="kw-word">{m.word}</span>
             <span class="kw-match-info">✓ +{m.points_earned} — {m.writing_title || 'Untitled'}</span>
+            <span class="kw-author">{m.player_type === 'ai' ? '🤖' : '👤'} {m.display_name || m.username}</span>
           </div>
         {/each}
       </div>
@@ -608,6 +609,9 @@
     .kw-badge { font-size: 0.72rem; font-weight: 700; color: var(--accent); }
     .kw-badge.kw-pending { color: var(--muted); }
     .kw-author { font-size: 0.7rem; color: var(--muted); }
+    .kw-poison { margin-top: 1rem; }
+    .kw-poison-pill { border-color: #f59e0b44; background: rgba(245,158,11,0.08); }
+    .kw-poison-pill .kw-badge { color: #f59e0b; }
     .kw-recent { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
     .match-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; font-size: 0.85rem; }
     .kw-match-info { color: var(--muted); font-size: 0.78rem; }

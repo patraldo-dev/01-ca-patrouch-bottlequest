@@ -91,12 +91,14 @@
   "players.human": "👤 Human",
   "players.ai": "🤖 AI",
   "keywords.title": "Keyword Battle",
-  "keywords.desc": "Each player proposes one keyword per day. When a writer publishes something containing that keyword in the Agora, ALL humans score points. The AI plays too. Outsmart it.",
+  "keywords.desc": "Deploy one word per day into the hidden pool. When it surfaces in a published Agora writing, ALL humans score. Your words are invisible until they strike. No points from your own words — pure cooperation.",
   "keywords.scan": "Scan Agora",
   "keywords.points_label": "points",
-  "keywords.empty": "No proposals yet today. Be the first to propose a keyword!",
-  "keywords.placeholder": "Your keyword today...",
-  "keywords.propose": "Propose",
+  "keywords.empty": "No confirmed strikes yet. Deploy a keyword and wait for the words to surface.",
+  "keywords.placeholder": "Your word today (4+ letters)...",
+  "keywords.propose": "Deploy",
   "keywords.today_pool": "Today's Pool",
-  "keywords.recent_matches": "Recent Matches"
+  "keywords.recent_matches": "Confirmed Strikes",
+  "keywords.poison": "Poison Words (blocked for Louisa May Albot)",
+  "keywords.already_proposed": "Word deployed for today. Come back tomorrow."
 }

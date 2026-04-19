@@ -91,12 +91,14 @@
   "players.human": "👤 Humano",
   "players.ai": "🤖 IA",
   "keywords.title": "Batalla de Palabras",
-  "keywords.desc": "Cada jugador propone una palabra clave por día. Cuando un escritor publica algo que contiene esa palabra en la Agora, TODOS los humanos suman puntos. La IA también juega. Supérala.",
+  "keywords.desc": "Despliega una palabra por día en el pool oculto. Cuando aparece en una escritura publicada en la Agora, TODOS los humanos suman. Tus palabras son invisibles hasta que impactan. Sin puntos por tus propias palabras — pura cooperación.",
   "keywords.scan": "Escanear Agora",
   "keywords.points_label": "puntos",
-  "keywords.empty": "Sin propuestas aún hoy. ¡Sé el primero en proponer una palabra clave!",
-  "keywords.placeholder": "Tu palabra clave hoy...",
-  "keywords.propose": "Proponer",
+  "keywords.empty": "Sin impactos confirmados aún. Despliega una palabra y espera.",
+  "keywords.placeholder": "Tu palabra hoy (4+ letras)...",
+  "keywords.propose": "Desplegar",
   "keywords.today_pool": "Pool de Hoy",
-  "keywords.recent_matches": "Matches Recientes"
+  "keywords.recent_matches": "Impactos Confirmados",
+  "keywords.poison": "Palabras Veneno (bloqueadas para Louisa May Albot)",
+  "keywords.already_proposed": "Palabra desplegada por hoy. Vuelve mañana."
 }
