@@ -45,5 +45,6 @@
   "bottles.log.coords": "Position",
   "bottles.log.dist": "Étape",
   "bottles.log.speed": "Vitesse",
-  "bottles.columns": "Colonnes"
+  "bottles.columns": "Colonnes",
+  "bottles.status.sailing": "Flottante"
 }

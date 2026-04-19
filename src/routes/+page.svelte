@@ -76,6 +76,11 @@
     return (dist / hours).toFixed(2) + ' km/h';
   }
 
+  function statusLabel(status) {
+    const map = { launched: 'Launched', sailing: 'Floating', beached: 'Beached', found: 'Found', preparing: 'Preparing' };
+    return map[status] || status;
+  }
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -192,7 +197,7 @@
           <div style="color:#09090b;font-family:Inter,sans-serif;min-width:200px">
             <strong style="font-family:Playfair Display,serif;font-size:1.05em">${bottle.title || '🍾'}</strong><br>
             <div style="font-size:0.85em;margin-top:4px;color:#555">
-              <div><b>${author}</b> · <span style="text-transform:capitalize">${bottle.status}</span></div>
+              <div><b>${author}</b> · <span style="">${statusLabel(bottle.status)}</span></div>
               ${bottle.launched_at ? `<div>📅 ${formatDate(bottle.launched_at)}</div>` : ''}
               ${bottle.launch_lat ? `<div>📍 ${formatCoords(bottle.launch_lat, bottle.launch_lon)}</div>` : ''}
               ${bottle.current_lat ? `<div>➜ ${formatCoords(bottle.current_lat, bottle.current_lon)}</div>` : ''}
@@ -214,7 +219,7 @@
           <div style="color:#09090b;font-family:Inter,sans-serif;min-width:200px">
             <strong style="font-family:Playfair Display,serif;font-size:1.05em">${bottle.title || '🍾'}</strong><br>
             <div style="font-size:0.85em;margin-top:4px;color:#555">
-              <div><b>${author}</b> · <span style="text-transform:capitalize">${bottle.status}</span></div>
+              <div><b>${author}</b> · <span style="">${statusLabel(bottle.status)}</span></div>
               ${bottle.launched_at ? `<div>📅 ${formatDate(bottle.launched_at)}</div>` : ''}
               ${bottle.launch_lat ? `<div>📍 ${formatCoords(bottle.launch_lat, bottle.launch_lon)}</div>` : ''}
               ${bottle.current_lat ? `<div>➜ ${formatCoords(bottle.current_lat, bottle.current_lon)}</div>` : ''}
@@ -397,7 +402,7 @@
                   <div class="detail-row"><span>{$t('bottles.detail.speed')}</span><span>{avgSpeed(bottle).toFixed(2)} km/h</span></div>
                 {/if}
                 {#if showDetails.status}
-                  <div class="detail-row"><span>{$t('bottles.detail.status')}</span><span class="status-text status-{bottle.status}">{bottle.status}</span></div>
+                  <div class="detail-row"><span>{$t('bottles.detail.status')}</span><span class="status-text status-{bottle.status}">{statusLabel(bottle.status)}</span></div>
                 {/if}
                 {#if showDetails.driftLog && bottle.positions?.length > 1}
                   <div class="drift-log">
