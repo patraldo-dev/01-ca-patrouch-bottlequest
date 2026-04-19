@@ -306,9 +306,7 @@ html[data-theme="light"] .navbar {
 
 /* ─── Map ─── */
 .map-section {
-    margin: 1.5rem auto;
-    max-width: 1200px;
-    padding: 0 1.5rem;
+    padding: 1.5rem 0;
 }
 .map-wrap {
     height: 500px;

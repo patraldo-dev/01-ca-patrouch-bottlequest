@@ -306,12 +306,12 @@
 </div>
 
 <section class="map-section">
-  <div class="map-wrap">
+  <div class="container">
+    <div class="map-wrap">
     <div id="ocean-map"></div>
+    </div>
   </div>
 </section>
-
-<!-- Players -->
 {#if playersWithDist.length}
   <section class="players-section">
     <div class="container">
