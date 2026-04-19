@@ -161,5 +161,6 @@
   "keywords.info_last_match": "Última coincidencia",
   "keywords.info_current_value": "Valor actual",
   "bottles.launched_by": "Lanzada por",
-  "stats.pursuit": "En Persecución"
+  "stats.pursuit": "En Persecución",
+  "scoreboard.title": "Marcador"
 }

@@ -161,5 +161,6 @@
   "keywords.info_last_match": "Dernière correspondance",
   "keywords.info_current_value": "Valeur actuelle",
   "bottles.launched_by": "Lancée par",
-  "stats.pursuit": "En Poursuite"
+  "stats.pursuit": "En Poursuite",
+  "scoreboard.title": "Classement"
 }
