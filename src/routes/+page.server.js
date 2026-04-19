@@ -44,5 +44,10 @@ export async function load({ platform }) {
         console.error('Players load error:', e);
     }
 
-    return { bottles, players };
+    let market = { brent_price: 73, fed_rate: 5.25, cost_per_km: 0.73, brent_change: 0, fed_change: 0 };
+    try {
+        market = await db.prepare(`SELECT * FROM bq_market WHERE id = 'daily'`).first() || market;
+    } catch {}
+
+    return { bottles, players, market };
 }

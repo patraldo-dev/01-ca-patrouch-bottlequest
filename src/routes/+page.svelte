@@ -397,7 +397,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 </svelte:head>
 
-<section class="hero" aria-label="{$t('nav.map')}">
+<!-- Market Ticker Tape -->
+<div class="ticker-tape" role="status" aria-label="Market prices">
+  <div class="ticker-content">
+    <span class="ticker-item">
+      ⛽ BRENT <span class="ticker-value">${data.market?.brent_price?.toFixed(2) || '73.00'}</span>
+      <span class="ticker-change" class:ticker-up={data.market?.brent_change > 0} class:ticker-down={data.market?.brent_change < 0}>
+        {data.market?.brent_change > 0 ? '▲' : data.market?.brent_change < 0 ? '▼' : '—'}
+      </span>
+    </span>
+    <span class="ticker-divider">│</span>
+    <span class="ticker-item">
+      🏦 FED <span class="ticker-value">{data.market?.fed_rate?.toFixed(2) || '5.25'}%</span>
+      <span class="ticker-change" class:ticker-up={data.market?.fed_change > 0} class:ticker-down={data.market?.fed_change < 0}>
+        {data.market?.fed_change > 0 ? '▲' : data.market?.fed_change < 0 ? '▼' : '—'}
+      </span>
+    </span>
+    <span class="ticker-divider">│</span>
+    <span class="ticker-item">
+      🚢 <span class="ticker-value">{data.market?.cost_per_km?.toFixed(2) || '0.73'}</span> fuel/km
+    </span>
+    <span class="ticker-divider">│</span>
+    <span class="ticker-item">
+      🤖 FEE <span class="ticker-value">{data.market?.fed_rate?.toFixed(2) || '5.25'}%</span>
+    </span>
+  </div>
+</div>
+
+<section class="hero" aria-label="{$t('nav.map')}" aria-roledescription="hero">
   <div class="container">
     <h1>🍾 {$t('hero.title')} <span>Quest</span></h1>
     <p>{$t('hero.subtitle')}</p>
