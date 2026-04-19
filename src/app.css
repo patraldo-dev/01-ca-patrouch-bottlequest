@@ -120,7 +120,11 @@ html[data-theme="light"] .navbar {
 
 /* ─── Ticker Tape ─── */
 .ticker-tape { background: var(--ocean); color: #fff; padding: 0.4rem 0; overflow: hidden; font-size: 0.78rem; font-family: 'Inter', monospace; position: relative; z-index: 100; }
-.ticker-content { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+.ticker-content { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; animation: tickerScroll 30s linear infinite; }
+@keyframes tickerScroll {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
 .ticker-item { display: inline-flex; align-items: center; gap: 0.25rem; }
 .ticker-value { font-weight: 700; color: #fff; }
 .ticker-change { font-weight: 600; font-size: 0.7rem; }
