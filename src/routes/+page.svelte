@@ -139,7 +139,7 @@
     // Launch point
     L.circleMarker([20.6528, -105.2306], {
       radius: 10,
-      fillColor: '#3b82f6',
+      fillColor: '#0d9488',
       fillOpacity: 0.8,
       color: '#fff',
       weight: 2
@@ -160,25 +160,25 @@
       const colors = {
         beached: '#f59e0b',
         found: '#c084fc',
-        launched: '#3b82f6',
-        sailing: '#22d3ee',
+        launched: '#0d9488',
+        sailing: '#2dd4bf',
         sunk: '#ef4444'
       };
 
       // Animate trail
       if (bottle.positions?.length > 1) {
         const coords = bottle.positions.map(p => [p.lat, p.lon]);
-        const trailLine = L.polyline([], { color: '#3b82f6', weight: 2.5, opacity: 0.6 }).addTo(map);
+        const trailLine = L.polyline([], { color: '#0d9488', weight: 2.5, opacity: 0.6 }).addTo(map);
         const animMarker = L.circleMarker(coords[0], {
           radius: 8,
-          fillColor: colors[bottle.status] || '#3b82f6',
+          fillColor: colors[bottle.status] || '#0d9488',
           fillOpacity: 0.9,
           color: '#fff',
           weight: 2
         }).addTo(map);
 
         // Show static full trail faintly
-        L.polyline(coords, { color: '#3b82f6', weight: 1.5, opacity: 0.15, dashArray: '4 8' }).addTo(map);
+        L.polyline(coords, { color: '#0d9488', weight: 1.5, opacity: 0.15, dashArray: '4 8' }).addTo(map);
 
         // Animate the bright trail + marker
         let step = 0;
@@ -208,7 +208,7 @@
       } else {
         const marker = L.circleMarker([bottle.current_lat, bottle.current_lon], {
           radius: 10,
-          fillColor: colors[bottle.status] || '#3b82f6',
+          fillColor: colors[bottle.status] || '#0d9488',
           fillOpacity: 0.9,
           color: '#fff',
           weight: 2
@@ -242,7 +242,7 @@
       playerMarkers.push([player.lat, player.lon]);
       const icon = L.divIcon({
         className: 'player-marker',
-        html: `<div style="background:${player.team_color || '#3b82f6'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer" title="${player.display_name || player.username}">${player.team_id === 'team-alpha' ? '🧭' : '🐧'}</div>`,
+        html: `<div style="background:${player.team_color || '#0d9488'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer" title="${player.display_name || player.username}">${player.team_id === 'team-alpha' ? '🧭' : '🐧'}</div>`,
         iconSize: [32, 32],
         iconAnchor: [16, 16]
       });
@@ -320,12 +320,12 @@
         {#each playersWithDist as player}
           <button class="player-card" onclick={() => flyToPlayer(player)}>
             <div class="player-header">
-              <div class="player-avatar" style="background:{player.team_color || '#3b82f6'}">
+              <div class="player-avatar" style="background:{player.team_color || '#0d9488'}">
                 {player.team_id === 'team-alpha' ? '🧭' : '🐧'}
               </div>
               <div class="player-info">
                 <h3>{player.display_name || player.username}</h3>
-                <span class="team-badge" style="background:{player.team_color || '#3b82f6'}22;color:{player.team_color || '#3b82f6'}">{player.team_name || 'Free Agent'}</span>
+                <span class="team-badge" style="background:{player.team_color || '#0d9488'}22;color:{player.team_color || '#0d9488'}">{player.team_name || 'Free Agent'}</span>
               </div>
             </div>
             <div class="player-details">
@@ -495,8 +495,8 @@
     .bottle-icon { font-size: 1.5rem; }
 
     .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .status-dot.status-launched { background: #3b82f6; }
-    .status-dot.status-sailing { background: #22d3ee; }
+    .status-dot.status-launched { background: #0d9488; }
+    .status-dot.status-sailing { background: #2dd4bf; }
     .status-dot.status-beached { background: #f59e0b; }
     .status-dot.status-found { background: #c084fc; }
 
@@ -505,8 +505,8 @@
     .detail-row span:first-child { color: var(--muted); }
     .detail-row .mono { font-family: monospace; font-size: 0.8rem; }
     .status-text { text-transform: capitalize; font-weight: 600; }
-    .status-text.status-launched { color: #3b82f6; }
-    .status-text.status-sailing { color: #22d3ee; }
+    .status-text.status-launched { color: #0d9488; }
+    .status-text.status-sailing { color: #2dd4bf; }
     .status-text.status-beached { color: #f59e0b; }
     .status-text.status-found { color: #c084fc; }
     .drift-log { margin-top: 0.75rem; }
