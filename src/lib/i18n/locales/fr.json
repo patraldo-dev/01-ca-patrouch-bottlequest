@@ -89,5 +89,10 @@
   "players.points": "Points",
   "players.fuel": "Carburant",
   "players.human": "👤 Humain",
-  "players.ai": "🤖 IA"
+  "players.ai": "🤖 IA",
+  "keywords.title": "Mots-Clés et Indices",
+  "keywords.desc": "Des mots cachés dans l'Agora qui vous donnent des points et du carburant.",
+  "keywords.scan": "Scanner l'Agora",
+  "keywords.points_label": "points",
+  "keywords.empty": "Pas encore de mots-clés. Cliquez sur Scanner l'Agora pour extraire des indices."
 }

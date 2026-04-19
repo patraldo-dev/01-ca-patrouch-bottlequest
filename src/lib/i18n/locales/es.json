@@ -89,5 +89,10 @@
   "players.points": "Puntos",
   "players.fuel": "Combustible",
   "players.human": "👤 Humano",
-  "players.ai": "🤖 IA"
+  "players.ai": "🤖 IA",
+  "keywords.title": "Palabras Clave y Pistas",
+  "keywords.desc": "Palabras ocultas en la Agora que te dan puntos y combustible para moverte por el océano.",
+  "keywords.scan": "Escanear Agora",
+  "keywords.points_label": "puntos",
+  "keywords.empty": "Sin palabras clave aún. Haz clic en \"Escanear Agora\" para extraer pistas."
 }

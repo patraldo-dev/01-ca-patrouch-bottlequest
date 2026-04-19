@@ -89,5 +89,10 @@
   "players.points": "Points",
   "players.fuel": "Fuel",
   "players.human": "👤 Human",
-  "players.ai": "🤖 AI"
+  "players.ai": "🤖 AI",
+  "keywords.title": "Keywords & Clues",
+  "keywords.desc": "Words hidden in the Agora that give you points and fuel to move across the ocean.",
+  "keywords.scan": "Scan Agora",
+  "keywords.points_label": "points",
+  "keywords.empty": "No keywords yet. Click \"Scan Agora\" to extract clues from published writings."
 }

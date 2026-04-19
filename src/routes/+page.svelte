@@ -15,6 +15,8 @@
     status: true, driftLog: true
   });
   let showMenu = $state(false);
+  let keywords = $state([]);
+  let scanning = $state(false);
 
   function selectBottle(bottle) {
     activeBottle = activeBottle?.id === bottle.id ? null : bottle;
@@ -81,6 +83,21 @@
     return map[status] || status;
   }
 
+  async function scanKeywords() {
+    scanning = true;
+    try {
+      const res = await fetch('/api/keywords', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        const refresh = await fetch('/api/keywords');
+        if (refresh.ok) {
+          keywords = (await refresh.json()).available || [];
+        }
+      }
+    } catch {}
+    scanning = false;
+  }
+
   function statClick(type) {
     const list = data.bottles.filter(b => type === 'active' ? (b.status === 'launched' || b.status === 'sailing') : b.status === type);
     if (list.length === 0) return;
@@ -126,6 +143,15 @@
 
   onMount(async () => {
     if (!browser) return;
+
+    // Load keywords
+    try {
+      const res = await fetch('/api/keywords');
+      if (res.ok) {
+        const data = await res.json();
+        keywords = data.available || [];
+      }
+    } catch {}
 
     const L = (await import('leaflet')).default;
     const css = document.createElement('link');
@@ -357,6 +383,29 @@
   </section>
 {/if}
 
+<!-- Keywords -->
+<section class="keywords-section" aria-labelledby="keywords-title">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="keywords-title">🔑 {$t('keywords.title')}</h2>
+      <button class="btn-scan" onclick={scanKeywords} disabled={scanning}>{$t('keywords.scan')}</button>
+    </div>
+    <p class="keywords-desc">{$t('keywords.desc')}</p>
+    {#if keywords.length > 0}
+      <div class="keywords-grid" role="list">
+        {#each keywords as kw}
+          <button class="keyword-pill" role="listitem" aria-label="{kw.word}: {$t('keywords.points_label')} {kw.points_value}">
+            {kw.word}
+            <span class="kw-points">+{kw.points_value}</span>
+          </button>
+        {/each}
+      </div>
+    {:else}
+      <p class="keywords-empty">{$t('keywords.empty')}</p>
+    {/if}
+  </div>
+</section>
+
 <!-- Bottle list -->
 {#if data.bottles.length}
   <section class="bottles-section" aria-labelledby="bottles-title">
@@ -486,6 +535,18 @@
     .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
     /* Bottles section */
+    .keywords-section { padding: 2rem 1.5rem 1rem; }
+    .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
+    .keywords-empty { color: var(--muted); font-size: 0.85rem; }
+    .btn-scan { background: var(--ocean); color: #fff; border: none; border-radius: 6px; padding: 0.4rem 0.85rem; font-size: 0.82rem; cursor: pointer; font-family: var(--font-body); font-weight: 600; transition: opacity 0.2s; }
+    .btn-scan:hover { opacity: 0.85; }
+    .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+    .keywords-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .keyword-pill {
+      background: var(--accent-dim); border: 1px solid var(--border); border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.85rem; color: var(--fg); cursor: pointer; font-family: var(--font-body); display: flex; align-items: center; gap: 0.4rem; transition: border-color 0.2s, background 0.2s; }
+    .keyword-pill:hover { border-color: var(--accent); background: var(--ocean); color: #fff; }
+    .kw-points { font-size: 0.72rem; font-weight: 700; color: var(--accent); }
+    .keyword-pill:hover .kw-points { color: #fca5a5; }
     .bottles-section { padding: 2rem 1.5rem 4rem; }
     .section-title { font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent); margin-bottom: 1.25rem; }
     .bottles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
