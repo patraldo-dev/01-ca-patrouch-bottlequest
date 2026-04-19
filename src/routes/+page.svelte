@@ -81,6 +81,17 @@
     return map[status] || status;
   }
 
+  function statClick(type) {
+    const list = data.bottles.filter(b => type === 'active' ? (b.status === 'launched' || b.status === 'sailing') : b.status === type);
+    if (list.length === 0) return;
+    if (list.length <= 6 && mapRef) {
+      const bounds = L.latLngBounds(list.map(b => [b.current_lat || b.launch_lat, b.current_lon || b.launch_lon]).filter(p => p[0]));
+      mapRef.fitBounds(bounds, { padding: [40, 40] });
+    } else {
+      document.querySelector('.bottles-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -290,18 +301,18 @@
 <!-- Stats -->
 <div class="container">
   <div class="stats-bar" role="status" aria-label="{$t('stats.label')}">
-    <div class="stat-item">
+    <button class="stat-item" onclick={() => statClick('active')} aria-label="{$t('stats.active')}">
       <span class="stat-num">{data.bottles.length}</span>
       <span class="stat-label">{$t('stats.active')}</span>
-    </div>
-    <div class="stat-item">
+    </button>
+    <button class="stat-item" onclick={() => statClick('beached')} aria-label="{$t('stats.beached')}">
       <span class="stat-num">{data.bottles.filter(b => b.status === 'beached').length}</span>
       <span class="stat-label">{$t('stats.beached')}</span>
-    </div>
-    <div class="stat-item">
+    </button>
+    <button class="stat-item" onclick={() => statClick('found')} aria-label="{$t('stats.found')}">
       <span class="stat-num">{data.bottles.filter(b => b.status === 'found').length}</span>
       <span class="stat-label">{$t('stats.found')}</span>
-    </div>
+    </button>
   </div>
 </div>
 
@@ -467,7 +478,8 @@
         border: 1px solid var(--border);
         border-radius: var(--radius);
     }
-    .stat-item { text-align: center; flex: 1; }
+    .stat-item { text-align: center; flex: 1; background: none; border: none; cursor: pointer; font-family: var(--font-body); padding: 0.5rem; border-radius: 8px; transition: background 0.2s; }
+    .stat-item:hover { background: var(--accent-dim); }
     .stat-num { display: block; font-family: var(--font-heading); font-size: 2rem; color: var(--accent); font-weight: 700; }
     .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
