@@ -110,5 +110,16 @@
   "transfer.note_label": "Note (optionnelle)",
   "transfer.note_placeholder": "Bonne chance...",
   "transfer.fee_free": "Gratuit",
-  "transfer.send_btn": "Envoyer ⛽"
+  "transfer.send_btn": "Envoyer ⛽",
+  "move.title": "Naviguer",
+  "move.speed_label": "Vitesse",
+  "move.drift": "Dérive",
+  "move.sail": "Voile",
+  "move.motor": "Moteur",
+  "move.distance": "Distance",
+  "move.zone": "Zone",
+  "move.speed_cost": "Vitesse",
+  "move.competition": "Compétition",
+  "move.total_cost": "Coût total",
+  "move.go_btn": "Appareiller →"
 }

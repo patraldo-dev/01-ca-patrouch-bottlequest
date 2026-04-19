@@ -110,5 +110,16 @@
   "transfer.note_label": "Note (optional)",
   "transfer.note_placeholder": "Good luck out there...",
   "transfer.fee_free": "Free",
-  "transfer.send_btn": "Send ⛽"
+  "transfer.send_btn": "Send ⛽",
+  "move.title": "Navigate",
+  "move.speed_label": "Speed",
+  "move.drift": "Drift",
+  "move.sail": "Sail",
+  "move.motor": "Motor",
+  "move.distance": "Distance",
+  "move.zone": "Zone",
+  "move.speed_cost": "Speed",
+  "move.competition": "Competition",
+  "move.total_cost": "Total cost",
+  "move.go_btn": "Set sail →"
 }

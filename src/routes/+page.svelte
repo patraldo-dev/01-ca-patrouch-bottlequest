@@ -32,6 +32,12 @@
   let transferring = $state(false);
   let transferMax = $state(0);
   let myFuel = $state(0);
+  let moveTarget = $state(null);
+  let moveSpeed = $state('sail');
+  let moveConfirm = $state(false);
+  let moveMsg = $state('');
+  let moveOk = $state(false);
+  let moveCost = $state(null);
 
   async function openTransfer(target) {
     transferTarget = target;
@@ -76,6 +82,40 @@
       transferOk = false;
     }
     transferring = false;
+  }
+
+  async function executeMove() {
+    if (!moveTarget) return;
+    moveConfirm = true;
+    moveMsg = '';
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ target_lat: moveTarget.lat, target_lon: moveTarget.lon, speed: moveSpeed })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        moveMsg = data.captured
+          ? `🏴‍☠️ ${data.captured.title} captured! +${data.captured.bonus} ⛽`
+          : `✅ Moved! (${data.cost} ⛽)`;
+        moveOk = true;
+        moveCost = data.cost_breakdown;
+        setTimeout(() => { moveTarget = null; moveCost = null; window.location.reload(); }, 1500);
+      } else if (res.status === 402) {
+        moveMsg = `⛽ ${data.error}`;
+        moveOk = false;
+        moveCost = data.cost_breakdown;
+      } else {
+        moveMsg = data.error;
+        moveOk = false;
+      }
+    } catch {
+      moveMsg = 'Connection error';
+      moveOk = false;
+    }
+    moveConfirm = false;
   }
 
   function selectBottle(bottle) {
@@ -386,6 +426,13 @@
     if (allPoints.length) {
       map.fitBounds(L.latLngBounds(allPoints).pad(0.3));
     }
+
+    // Click to move
+    map.on('click', async (e) => {
+      if (moveConfirm) return;
+      moveTarget = { lat: e.latlng.lat, lon: e.latlng.lng };
+      moveSpeed = 'sail';
+    });
   });
 </script>
 
@@ -568,6 +615,52 @@
         {/if}
         <button class="transfer-btn" onclick={sendTransfer} disabled={transferring || !transferAmount || transferAmount < 1}>
           {transferring ? '...' : $t('transfer.send_btn')}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Move Confirmation Modal -->
+{#if moveTarget}
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Navigate" onclick={() => moveTarget = null}>
+    <div class="move-modal" onclick={(e) => e.stopPropagation()}>
+      <div class="move-header">
+        <h3>🧭 {$t('move.title')}</h3>
+        <button class="modal-close" onclick={() => moveTarget = null} aria-label="Close">✕</button>
+      </div>
+      <div class="move-body">
+        <div class="move-target">
+          <span class="move-coords">{moveTarget.lat.toFixed(5)}, {moveTarget.lon.toFixed(5)}</span>
+        </div>
+        <div class="move-speed-section">
+          <label class="move-label">{$t('move.speed_label')}</label>
+          <div class="move-speeds">
+            <button class="move-speed-btn" class:active={moveSpeed === 'drift'} onclick={() => moveSpeed = 'drift'}>
+              🐢 {$t('move.drift')}<br><small>0.5×</small>
+            </button>
+            <button class="move-speed-btn" class:active={moveSpeed === 'sail'} onclick={() => moveSpeed = 'sail'}>
+              ⛵ {$t('move.sail')}<br><small>1×</small>
+            </button>
+            <button class="move-speed-btn" class:active={moveSpeed === 'motor'} onclick={() => moveSpeed = 'motor'}>
+              🏎️ {$t('move.motor')}<br><small>4×</small>
+            </button>
+          </div>
+        </div>
+        {#if moveCost}
+          <div class="move-cost-preview">
+            <div class="move-cost-row"><span>{$t('move.distance')}</span><span>{moveCost.distKm} km</span></div>
+            <div class="move-cost-row"><span>{$t('move.zone')}</span><span>{moveCost.zoneLabel} ({moveCost.zoneMult}×)</span></div>
+            <div class="move-cost-row"><span>{$t('move.speed_cost')}</span><span>{moveCost.speedMult}×</span></div>
+            <div class="move-cost-row"><span>{$t('move.competition')}</span><span>{moveCost.compLabel} ({moveCost.compMult}×)</span></div>
+            <div class="move-cost-row move-cost-total"><span>{$t('move.total_cost')}</span><span class="move-total-amount">⛽ {moveCost.fuelCost}</span></div>
+          </div>
+        {/if}
+        {#if moveMsg}
+          <p class="move-msg" class:move-success={moveOk} class:move-error={!moveOk}>{moveMsg}</p>
+        {/if}
+        <button class="move-btn" onclick={executeMove} disabled={moveConfirm}>
+          {moveConfirm ? '...' : $t('move.go_btn')}
         </button>
       </div>
     </div>
@@ -790,6 +883,27 @@
     .transfer-msg { font-size: 0.82rem; text-align: center; margin-bottom: 0.75rem; }
     .transfer-success { color: #4ade80; }
     .transfer-error { color: #ef4444; }
+    .move-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 380px; z-index: 10001; overflow: hidden; }
+    .move-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .move-header h3 { font-family: var(--font-heading); font-size: 1.05rem; margin: 0; color: var(--fg); }
+    .move-body { padding: 1.25rem; }
+    .move-target { text-align: center; padding: 0.75rem; background: var(--surface); border-radius: 8px; margin-bottom: 1rem; }
+    .move-coords { font-family: monospace; font-size: 0.95rem; color: var(--accent); }
+    .move-speed-section { margin-bottom: 1rem; }
+    .move-label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .move-speeds { display: flex; gap: 0.5rem; }
+    .move-speed-btn { flex: 1; background: var(--surface); border: 2px solid var(--border); border-radius: 8px; padding: 0.6rem 0.4rem; cursor: pointer; text-align: center; font-size: 0.85rem; color: var(--fg); font-family: var(--font-body); transition: all 0.2s; }
+    .move-speed-btn.active { border-color: var(--accent); background: var(--accent-dim); }
+    .move-speed-btn small { color: var(--muted); font-size: 0.75rem; }
+    .move-cost-preview { background: var(--surface); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+    .move-cost-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.2rem 0; color: var(--muted); }
+    .move-cost-total { font-weight: 700; color: var(--fg); border-top: 1px solid var(--border); padding-top: 0.4rem; margin-top: 0.3rem; }
+    .move-total-amount { color: var(--accent); font-size: 1.1rem; }
+    .move-msg { font-size: 0.82rem; text-align: center; margin-bottom: 0.5rem; }
+    .move-success { color: #4ade80; }
+    .move-error { color: #ef4444; }
+    .move-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); }
+    .move-btn:disabled { opacity: 0.4; }
     .keywords-section { padding: 2rem 0 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
