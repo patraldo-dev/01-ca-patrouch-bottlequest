@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { t, getLocale } from '$lib/i18n';
+  import { sounds } from '$lib/sounds.js';
 
   let { data } = $props();
 
@@ -79,6 +80,7 @@
       if (res.ok) {
         transferMsg = `✅ ${data.message}`;
         transferOk = true;
+        sounds.transfer_sent();
         myFuel = data.remaining_fuel;
         transferMax = data.daily_max - data.daily_used;
         transferAmount = 0;
@@ -106,10 +108,14 @@
       });
       const data = await res.json();
       if (res.ok) {
-        moveMsg = data.captured
-          ? `🏴‍☠️ ${data.captured.title} captured! +${data.captured.bonus} ⛽`
-          : `✅ Moved! (${data.cost} ⛽)`;
         moveOk = true;
+        if (data.captured) {
+          moveMsg = `🏴‍☠️ ${data.captured.title} captured! +${data.captured.bonus} ⛽`;
+          sounds.bottle_captured();
+        } else {
+          moveMsg = `✅ Moved! (${data.cost} ⛽)`;
+          sounds.move_complete();
+        }
         moveCost = data.cost_breakdown;
         setTimeout(() => { moveTarget = null; moveCost = null; window.location.reload(); }, 1500);
       } else if (res.status === 402) {
@@ -148,10 +154,10 @@
       });
       const data = await res.json();
       if (res.ok) {
-        betMsg = `✅ ${data.message}`; betOk = true;
+        betMsg = `✅ ${data.message}`; betOk = true; sounds.bet_placed();
         bettingBottle = null; betTarget = null; betAmount = 0;
         loadBets();
-      } else { betMsg = data.error; betOk = false; }
+      } else { betMsg = data.error; betOk = false; sounds.error(); }
     } catch { betMsg = 'Error'; betOk = false; }
     betting = false;
   }
