@@ -307,7 +307,7 @@
               <span class="status-dot status-{bottle.status}"></span>
             </div>
             <h3>{bottle.title || $t('bottles.untitled')}</h3>
-            <p class="card-meta">{bottle.display_name || bottle.username || $t('bottles.anonymous')}</p>
+            <p class="card-meta">{bottle.author_name || $t('bottles.anonymous')}</p>
             {#if activeBottleData?.id === bottle.id}
               <div class="card-detail">
                 {#if bottle.launched_at}

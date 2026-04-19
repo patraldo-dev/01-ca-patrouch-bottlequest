@@ -11,7 +11,9 @@ export async function load({ platform }) {
     // Bottles
     try {
         const { results } = await db.prepare(`
-            SELECT b.* FROM bottles b WHERE b.status IN ('launched', 'sailing', 'beached', 'found')
+            SELECT b.*, u.display_name as author_name FROM bottles b
+            LEFT JOIN users u ON b.user_id = u.id
+            WHERE b.status IN ('launched', 'sailing', 'beached', 'found')
             ORDER BY b.created_at DESC
         `).all();
         bottles = results || [];
