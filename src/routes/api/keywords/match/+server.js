@@ -1,6 +1,13 @@
 // Check pending keyword proposals against a published writing
-// Rules: no self-points, expire on first match, humans share cooperatively
+// Decay model: points halve with each match (base * decay_rate^match_count)
+// 5 decimal precision, round up
+// No expiry — words stay active but lose force over time
 import { json } from '@sveltejs/kit';
+
+function decayPoints(basePoints, matchCount, decayRate = 0.5) {
+  const earned = basePoints * Math.pow(decayRate, matchCount);
+  return Math.ceil(earned * 100000) / 100000; // 5 decimals, round up
+}
 
 export async function POST({ request, platform }) {
   const db = platform?.env?.DB;
@@ -18,63 +25,64 @@ export async function POST({ request, platform }) {
     const text = ((writing.title || '') + ' ' + writing.content).toLowerCase();
     const textWords = new Set(text.match(/\p{L}{4,}/gu) || []);
 
-    // Get all pending proposals (look back 3 days for fairness)
+    // Get all active proposals (pending status, any date)
     const { results: proposals } = await db.prepare(`
-      SELECT id, word, player_id, points_earned FROM bq_keyword_proposals
-      WHERE status = 'pending' AND proposal_date >= date('now', '-3 days')
+      SELECT id, word, player_id, points_earned, match_count, decay_rate FROM bq_keyword_proposals
+      WHERE status = 'pending'
     `).all();
 
-    if (!proposals?.length) return json({ message: 'No pending proposals', matches: 0 });
+    if (!proposals?.length) return json({ message: 'No active proposals', matches: 0 });
 
     let matched = 0;
     const results = [];
     const matchedHumanIds = new Set();
     const matchedAiIds = new Set();
+    const newPoisonWords = [];
 
     for (const p of proposals) {
       const kw = p.word.toLowerCase();
-      if (textWords.has(kw)) {
-        // Expiry: mark as matched immediately (first match only)
-        await db.prepare(
-          `UPDATE bq_keyword_proposals SET status = 'matched', matched_writing_id = ? WHERE id = ?`
-        ).bind(writing_id, p.id).run();
+      if (!textWords.has(kw)) continue;
 
-        // Determine if proposer is human or ai
-        const player = await db.prepare(
-          `SELECT type FROM bq_players WHERE id = ?`
-        ).bind(p.player_id).first();
+      // Calculate decayed points
+      const newMatchCount = (p.match_count || 0) + 1;
+      const earned = decayPoints(p.points_earned, p.match_count || 0, p.decay_rate || 0.5);
 
-        const isHuman = player?.type === 'human';
-        const isAuthor = p.player_id === writing.user_id; // self-match
+      // Update: increment match_count, stay pending (never expires), record latest match
+      await db.prepare(
+        `UPDATE bq_keyword_proposals
+         SET match_count = ?, last_matched_at = datetime('now'), last_matched_writing_id = ?
+         WHERE id = ?`
+      ).bind(newMatchCount, writing_id, p.id).run();
 
-        if (isHuman && !isAuthor) {
-          matchedHumanIds.add(p.player_id);
-        } else if (!isHuman) {
-          matchedAiIds.add(p.player_id);
-        }
+      const player = await db.prepare(`SELECT type FROM bq_players WHERE id = ?`).bind(p.player_id).first();
+      const isHuman = player?.type === 'human';
+      const isAuthor = p.player_id === writing.user_id;
 
-        results.push({
-          word: kw, proposer_id: p.player_id, points: p.points_earned,
-          is_human: isHuman, is_author: isAuthor
-        });
-        matched++;
+      if (isHuman && !isAuthor) {
+        matchedHumanIds.add(p.player_id);
+        newPoisonWords.push(kw);
+      } else if (!isHuman) {
+        matchedAiIds.add(p.player_id);
       }
+
+      results.push({
+        word: kw, proposer_id: p.player_id,
+        base_points: p.points_earned,
+        earned: earned,
+        match_number: newMatchCount,
+        is_human: isHuman, is_author: isAuthor
+      });
+      matched++;
     }
 
-    // Award points: ALL humans share when ANY human keyword matches (cooperative)
-    // EXCEPT: no points for humans whose OWN keyword matched their OWN writing
+    // Award ALL humans cooperatively (no self-points)
     if (matched > 0 && matchedHumanIds.size > 0) {
-      const { results: allHumans } = await db.prepare(
-        `SELECT id FROM bq_players WHERE type = 'human'`
-      ).all();
-
+      const { results: allHumans } = await db.prepare(`SELECT id FROM bq_players WHERE type = 'human'`).all();
       if (allHumans?.length) {
-        // Sum points from all human non-self matches
         const totalBonus = results
           .filter(r => r.is_human && !r.is_author)
-          .reduce((sum, r) => sum + r.points, 0);
-
-        const fuelBonus = Math.floor(totalBonus / 2);
+          .reduce((sum, r) => sum + r.earned, 0);
+        const fuelBonus = totalBonus / 2;
 
         for (const h of allHumans) {
           await db.prepare(
@@ -84,28 +92,23 @@ export async function POST({ request, platform }) {
       }
     }
 
-    // AI bots get points only for their own matches (competitive, no cooperation)
+    // AI bots: competitive, own matches only
     for (const aiId of matchedAiIds) {
       const aiBonus = results
         .filter(r => r.proposer_id === aiId)
-        .reduce((sum, r) => sum + r.points, 0);
+        .reduce((sum, r) => sum + r.earned, 0);
 
       await db.prepare(
         `UPDATE bq_players SET points = points + ?, fuel = fuel + ? WHERE id = ?`
-      ).bind(aiBonus, Math.floor(aiBonus / 2), aiId).run();
+      ).bind(aiBonus, aiBonus / 2, aiId).run();
     }
-
-    // Collect matched human keywords as poison words (block Albot)
-    const poisonWords = results
-      .filter(r => r.is_human)
-      .map(r => r.word);
 
     return json({
       message: `Found ${matched} keyword matches`,
       matches: matched,
       details: results,
-      poison_words_added: poisonWords,
-      human_bonus: matchedHumanIds.size > 0 ? results.filter(r => r.is_human && !r.is_author).reduce((s, r) => s + r.points, 0) : 0,
+      poison_words_added: newPoisonWords,
+      human_bonus: matchedHumanIds.size > 0 ? results.filter(r => r.is_human && !r.is_author).reduce((s, r) => s + r.earned, 0) : 0,
       ai_matches: matchedAiIds.size
     });
 
@@ -115,20 +118,31 @@ export async function POST({ request, platform }) {
   }
 }
 
-// GET: retrieve poison words (to pass to Albot's writing prompt)
+// GET: retrieve poison words (all human keywords that have matched at least once)
 export async function GET({ request, platform }) {
   const db = platform?.env?.DB;
   if (!db) return json({ error: 'No DB' }, { status: 500 });
 
   try {
     const { results: poison } = await db.prepare(`
-      SELECT DISTINCT word FROM bq_keyword_proposals
-      WHERE status = 'matched'
-        AND proposal_date >= date('now', '-14 days')
+      SELECT DISTINCT kp.word, kp.points_earned, kp.match_count,
+             kp.last_matched_at, p.display_name, p.username
+      FROM bq_keyword_proposals kp
+      LEFT JOIN bq_players p ON kp.player_id = p.id
+      WHERE kp.status = 'pending' AND kp.match_count > 0 AND p.type = 'human'
+      ORDER BY kp.last_matched_at DESC
+      LIMIT 100
     `).all();
 
     return json({
-      poison_words: (poison || []).map(p => p.word)
+      poison_words: (poison || []).map(p => ({
+        word: p.word,
+        base_points: p.points_earned,
+        current_value: decayPoints(p.points_earned, p.match_count, 0.5),
+        match_count: p.match_count,
+        last_matched: p.last_matched_at,
+        proposer: p.display_name || p.username
+      }))
     });
   } catch (e) {
     return json({ error: e.message }, { status: 500 });

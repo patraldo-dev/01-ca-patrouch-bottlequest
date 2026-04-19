@@ -138,46 +138,56 @@ export async function GET({ request, platform }) {
       todayProposed = count?.c > 0;
     }
 
-    // Recent matches (last 7 days) — proposals are REVEALED only when matched
+    // Match history — revealed after first match, shows decay
     const { results: matches } = await db.prepare(`
-      SELECT kp.word, kp.points_earned, kp.matched_writing_id, kp.proposal_date,
-             w.title as writing_title, w.user_id as author_id,
-             p.username, p.display_name, p.type as player_type,
-             CASE WHEN kp.player_id = w.user_id THEN 1 ELSE 0 END as self_match
+      SELECT kp.word, kp.points_earned as base_points, kp.match_count,
+             kp.last_matched_at, kp.proposal_date,
+             w.title as writing_title,
+             p.username, p.display_name, p.type as player_type
       FROM bq_keyword_proposals kp
-      LEFT JOIN writings w ON kp.matched_writing_id = w.id
+      LEFT JOIN writings w ON kp.last_matched_writing_id = w.id
       LEFT JOIN bq_players p ON kp.player_id = p.id
-      WHERE kp.status = 'matched' AND kp.proposal_date >= date('now', '-7 days')
-      ORDER BY kp.created_at DESC
+      WHERE kp.status = 'pending' AND kp.match_count > 0
+      ORDER BY kp.last_matched_at DESC
       LIMIT 30
     `).all();
 
-    // Pool stats (this week, hidden detail — only counts, not words)
+    // Pool stats
     const poolStats = await db.prepare(`
       SELECT
         COUNT(DISTINCT kp.word) as total_words,
         COUNT(DISTINCT CASE WHEN p.type = 'human' THEN kp.word END) as human_words,
         COUNT(DISTINCT CASE WHEN p.type = 'ai' THEN kp.word END) as ai_words,
-        COUNT(DISTINCT CASE WHEN kp.status = 'matched' THEN kp.word END) as matched_words
+        COUNT(DISTINCT CASE WHEN kp.match_count > 0 THEN kp.word END) as revealed_words
       FROM bq_keyword_proposals kp
       LEFT JOIN bq_players p ON kp.player_id = p.id
-      WHERE kp.proposal_date >= date('now', '-7 days')
+      WHERE kp.status = 'pending'
     `).first();
 
-    // Active poison words (matched human keywords that now block Albot)
+    // Poison words (human keywords that have matched — block Albot)
     const { results: poison } = await db.prepare(`
-      SELECT DISTINCT kp.word, kp.points_earned
+      SELECT DISTINCT kp.word, kp.points_earned as base_points, kp.match_count
       FROM bq_keyword_proposals kp
       LEFT JOIN bq_players p ON kp.player_id = p.id
-      WHERE kp.status = 'matched' AND p.type = 'human'
-        AND kp.proposal_date >= date('now', '-7 days')
-      ORDER BY kp.points_earned DESC
+      WHERE kp.status = 'pending' AND kp.match_count > 0 AND p.type = 'human'
+      ORDER BY kp.match_count ASC
     `).all();
 
+    // Calculate current values with decay
+    const decayedMatches = (matches || []).map(m => ({
+      ...m,
+      current_value: Math.ceil(m.base_points * Math.pow(0.5, m.match_count - 1) * 100000) / 100000
+    }));
+
+    const decayedPoison = (poison || []).map(p => ({
+      ...p,
+      current_value: Math.ceil(p.base_points * Math.pow(0.5, p.match_count - 1) * 100000) / 100000
+    }));
+
     return json({
-      matches: matches || [],
-      pool_stats: poolStats || { total_words: 0, human_words: 0, ai_words: 0, matched_words: 0 },
-      poison_words: poison || [],
+      matches: decayedMatches,
+      pool_stats: poolStats || { total_words: 0, human_words: 0, ai_words: 0, revealed_words: 0 },
+      poison_words: decayedPoison,
       today_proposed: todayProposed,
       today
     });

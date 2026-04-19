@@ -434,7 +434,7 @@
           {#each poisonWords as pw}
             <div class="keyword-pill kw-poison-pill" role="listitem">
               <span class="kw-word">{pw.word}</span>
-              <span class="kw-badge">+{pw.points_earned}</span>
+              <span class="kw-badge">+{pw.current_value.toFixed(2)}</span>
             </div>
           {/each}
         </div>
@@ -446,7 +446,7 @@
         {#each recentMatches as m}
           <div class="match-row">
             <span class="kw-word">{m.word}</span>
-            <span class="kw-match-info">✓ +{m.points_earned} — {m.writing_title || 'Untitled'}</span>
+            <span class="kw-match-info">✓ +{m.current_value?.toFixed(2)} (×{m.match_count}) — {m.writing_title || 'Untitled'}</span>
             <span class="kw-author">{m.player_type === 'ai' ? '🤖' : '👤'} {m.display_name || m.username}</span>
           </div>
         {/each}
