@@ -61,6 +61,13 @@
     return hours > 0 ? total / hours : 0;
   }
 
+  function stepSpeed(prev, curr) {
+    const hours = (new Date(curr.recorded_at) - new Date(prev.recorded_at)) / 3600000;
+    if (hours <= 0) return '—';
+    const dist = haversine(prev.lat, prev.lon, curr.lat, curr.lon);
+    return (dist / hours).toFixed(2) + ' km/h';
+  }
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -368,6 +375,27 @@
                   <span>{$t('bottles.detail.status')}</span>
                   <span class="status-text status-{bottle.status}">{bottle.status}</span>
                 </div>
+                {#if bottle.positions?.length > 1}
+                  <div class="drift-log">
+                    <div class="drift-log-title">{$t('bottles.detail.drift_log')} ({bottle.positions.length} {$t('bottles.detail.steps')})</div>
+                    <div class="drift-log-table">
+                      <div class="drift-log-header">
+                        <span>{$t('bottles.log.time')}</span>
+                        <span>{$t('bottles.log.coords')}</span>
+                        <span>{$t('bottles.log.dist')}</span>
+                        <span>{$t('bottles.log.speed')}</span>
+                      </div>
+                      {#each bottle.positions as pos, i}
+                        <div class="drift-log-row">
+                          <span class="log-time">{formatDate(pos.recorded_at)}</span>
+                          <span class="mono">{formatCoords(pos.lat, pos.lon)}</span>
+                          <span>{i === 0 ? '—' : haversine(bottle.positions[i-1].lat, bottle.positions[i-1].lon, pos.lat, pos.lon).toFixed(1) + ' km'}</span>
+                          <span>{i === 0 ? '—' : stepSpeed(bottle.positions[i-1], pos)}</span>
+                        </div>
+                      {/each}
+                    </div>
+                  </div>
+                {/if}
               </div>
             {/if}
           </button>
@@ -450,6 +478,13 @@
     .status-text.status-sailing { color: #22d3ee; }
     .status-text.status-beached { color: #f59e0b; }
     .status-text.status-found { color: #c084fc; }
+    .drift-log { margin-top: 0.75rem; }
+    .drift-log-title { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .drift-log-table { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+    .drift-log-header { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap: 0.3rem; padding: 0.35rem 0.5rem; background: var(--border); font-size: 0.7rem; text-transform: uppercase; color: var(--muted); font-weight: 600; letter-spacing: 0.03em; position: sticky; top: 0; z-index: 1; }
+    .drift-log-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap: 0.3rem; padding: 0.3rem 0.5rem; font-size: 0.72rem; border-top: 1px solid var(--border); color: var(--fg); }
+    .drift-log-row:hover { background: var(--accent-dim); }
+    .log-time { white-space: nowrap; }
 
     @media (max-width: 640px) {
         .stats-bar { gap: 1rem; }

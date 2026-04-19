@@ -38,5 +38,11 @@
   "bottles.detail.now": "Posición actual",
   "bottles.detail.distance": "Distancia",
   "bottles.detail.speed": "Vel. promedio",
-  "bottles.detail.status": "Estado"
+  "bottles.detail.status": "Estado",
+  "bottles.detail.drift_log": "Registro de Deriva",
+  "bottles.detail.steps": "pasos",
+  "bottles.log.time": "Hora",
+  "bottles.log.coords": "Posición",
+  "bottles.log.dist": "Paso",
+  "bottles.log.speed": "Velocidad"
 }

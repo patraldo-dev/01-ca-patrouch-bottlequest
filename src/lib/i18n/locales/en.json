@@ -38,5 +38,11 @@
   "bottles.detail.now": "Current position",
   "bottles.detail.distance": "Distance",
   "bottles.detail.speed": "Avg speed",
-  "bottles.detail.status": "Status"
+  "bottles.detail.status": "Status",
+  "bottles.detail.drift_log": "Drift Log",
+  "bottles.detail.steps": "steps",
+  "bottles.log.time": "Time",
+  "bottles.log.coords": "Position",
+  "bottles.log.dist": "Step",
+  "bottles.log.speed": "Speed"
 }
