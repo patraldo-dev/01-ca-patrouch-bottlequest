@@ -84,13 +84,13 @@ export async function POST({ request, platform }) {
       return json({ error: 'You already proposed a keyword today. Try again tomorrow!' }, { status: 429 });
     }
 
-    // Check if word already proposed today by anyone
+    // Check if word is already ACTIVE (pending) — expired/matched words can be resurrected
     const dup = await db.prepare(
-      `SELECT id, player_id as proposer FROM bq_keyword_proposals WHERE word = ? AND proposal_date = ? LIMIT 1`
-    ).bind(clean, today).first();
+      `SELECT id, player_id as proposer FROM bq_keyword_proposals WHERE word = ? AND status = 'pending' LIMIT 1`
+    ).bind(clean).first();
 
     if (dup) {
-      return json({ error: 'Already proposed today', already_exists: true, proposer: dup.proposer }, { status: 409 });
+      return json({ error: 'Word is already active in the hidden pool', already_exists: true, proposer: dup.proposer }, { status: 409 });
     }
 
     // Get today's daily prompt for relevance weighting
