@@ -40,6 +40,7 @@ body {
     color: var(--fg);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 a { color: var(--accent); text-decoration: none; }
@@ -50,6 +51,7 @@ a:hover { text-decoration: underline; }
     margin: 0 auto;
     padding: 0 2rem;
     width: 100%;
+    box-sizing: border-box;
 }
 
 /* ─── Navbar ─── */
@@ -327,9 +329,26 @@ html[data-theme="light"] .navbar {
 }
 .footer a { color: var(--accent); }
 
+@media (max-width: 768px) {
+    .hamburger { display: flex; }
+    .nav-links {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: var(--bg);
+        z-index: 200;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+    .nav-links.mobile-open { display: flex; }
+    .nav-links a { font-size: 1.2rem; }
+    .nav-brand { font-size: 1.2rem; }
+}
+
 @media (max-width: 640px) {
-    .nav-links { gap: 1rem; }
-    .nav-links a { font-size: 0.8rem; }
     #ocean-map { height: 50vh; }
     .map-wrap { height: 50vh; min-height: 300px; }
     .stats-bar { gap: 1rem; flex-wrap: wrap; }

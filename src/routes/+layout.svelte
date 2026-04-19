@@ -8,6 +8,7 @@
     let { children, data } = $props();
     let dark = $state(true);
     let showHelp = $state(false);
+    let mobileOpen = $state(false);
     let currentLocale = $state(data?.serverLocale || getLocale());
 
     function toggleTheme() {
@@ -29,14 +30,17 @@
 <nav class="navbar" aria-label="{$t('nav.label')}">
     <div class="container">
         <a href="/" class="nav-brand">🍾 Bottle Quest</a>
-        <div class="nav-links">
-            <a href="/">{$t('nav.map')}</a>
-            <a href="/about">{$t('nav.about')}</a>
+        <button class="hamburger" onclick={() => mobileOpen = !mobileOpen} aria-label="Menu" aria-expanded={mobileOpen}>
+            <span class="ham-line"></span><span class="ham-line"></span><span class="ham-line"></span>
+        </button>
+        <div class="nav-links" class:mobile-open={mobileOpen}>
+            <a href="/" onclick={() => mobileOpen = false}>{$t('nav.map')}</a>
+            <a href="/about" onclick={() => mobileOpen = false}>{$t('nav.about')}</a>
             <LanguageSwitcher serverLocale={currentLocale} />
             <button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
                 {dark ? '☀️' : '🌙'}
             </button>
-            <button class="help-btn" onclick={() => showHelp = !showHelp} aria-label="{$t('help.title')}">?</button>
+            <button class="help-btn" onclick={() => { showHelp = !showHelp; mobileOpen = false; }} aria-label="{$t('help.title')}">?</button>
         </div>
     </div>
 </nav>
@@ -97,6 +101,12 @@
         font-family: var(--font-body);
     }
     .help-btn:hover { background: var(--accent); color: #fff; }
+    /* Hamburger */
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; flex-direction: column; gap: 4px; justify-content: center; }
+    .ham-line { display: block; width: 20px; height: 2px; background: var(--fg); border-radius: 2px; transition: transform 0.2s, opacity 0.2s; }
+    .hamburger[aria-expanded="true"] .ham-line:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger[aria-expanded="true"] .ham-line:nth-child(2) { opacity: 0; }
+    .hamburger[aria-expanded="true"] .ham-line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
     .help-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.6);
         z-index: 9000; display: flex; align-items: center; justify-content: center;
