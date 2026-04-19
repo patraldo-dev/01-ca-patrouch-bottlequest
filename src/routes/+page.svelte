@@ -540,6 +540,10 @@
       <span class="stat-num">{data.bottles.filter(b => b.status === 'found').length}</span>
       <span class="stat-label">{$t('stats.found')}</span>
     </button>
+    <button class="stat-item" aria-label="{$t('stats.pursuit')}" style="border-left: 1px solid var(--border);">
+      <span class="stat-num">{data.playersInPursuit}</span>
+      <span class="stat-label">{$t('stats.pursuit')}</span>
+    </button>
   </div>
 </div>
 

@@ -2,6 +2,7 @@ export async function load({ platform }) {
     const db = platform?.env?.DB;
     let bottles = [];
     let players = [];
+    let playersInPursuit = 0;
 
     if (!db) {
         console.error('No DB binding');
@@ -39,7 +40,10 @@ export async function load({ platform }) {
             LEFT JOIN bq_ports pt ON p.port_id = pt.id
         `).all();
         players = pr || [];
-        console.log('Players loaded:', players.length);
+        const { results: pip } = await db.prepare(`
+            SELECT COUNT(DISTINCT player_id) as cnt FROM bq_moves WHERE created_at > datetime('now', '-24 hours')
+        `).all();
+        playersInPursuit = pip?.[0]?.cnt || 0;
     } catch (e) {
         console.error('Players load error:', e);
     }
@@ -49,5 +53,5 @@ export async function load({ platform }) {
         market = await db.prepare(`SELECT * FROM bq_market WHERE id = 'daily'`).first() || market;
     } catch {}
 
-    return { bottles, players, market };
+    return { bottles, players, market, playersInPursuit };
 }

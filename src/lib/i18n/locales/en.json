@@ -160,5 +160,6 @@
   "keywords.info_times_scored": "times scored",
   "keywords.info_last_match": "Last match",
   "keywords.info_current_value": "Current value",
-  "bottles.launched_by": "Launched by"
+  "bottles.launched_by": "Launched by",
+  "stats.pursuit": "In Pursuit"
 }
