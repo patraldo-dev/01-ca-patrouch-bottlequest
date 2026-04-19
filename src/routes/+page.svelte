@@ -38,6 +38,14 @@
   let moveMsg = $state('');
   let moveOk = $state(false);
   let moveCost = $state(null);
+  let oddsBoard = $state([]);
+  let myBets = $state([]);
+  let bettingBottle = $state(null);
+  let betAmount = $state(0);
+  let betTarget = $state(null);
+  let betMsg = $state('');
+  let betOk = $state(false);
+  let betting = $state(false);
 
   async function openTransfer(target) {
     transferTarget = target;
@@ -116,6 +124,35 @@
       moveOk = false;
     }
     moveConfirm = false;
+  }
+
+  async function loadBets() {
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/bets', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        oddsBoard = data.oddsBoard || [];
+        myBets = data.myBets || [];
+      }
+    } catch {}
+  }
+
+  async function placeBet() {
+    if (!bettingBottle || !betTarget || !betAmount) return;
+    betting = true; betMsg = '';
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/bets', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ bottle_id: bettingBottle.bottle_id, bet_on_player_id: betTarget.player_id, amount: betAmount })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        betMsg = `✅ ${data.message}`; betOk = true;
+        bettingBottle = null; betTarget = null; betAmount = 0;
+        loadBets();
+      } else { betMsg = data.error; betOk = false; }
+    } catch { betMsg = 'Error'; betOk = false; }
+    betting = false;
   }
 
   function selectBottle(bottle) {
@@ -434,6 +471,9 @@
       moveSpeed = 'sail';
     });
   });
+
+  // Load betting data
+  loadBets();
 </script>
 
 <svelte:head>
@@ -558,6 +598,86 @@
     </div>
   </div>
 </section>
+
+
+<!-- Betting Odds Board -->
+{#if oddsBoard.length > 0}
+<section class="bets-section" aria-labelledby="bets-title">
+  <div class="container">
+    <h2 class="section-title" id="bets-title">📊 {$t('bets.title')}</h2>
+    <div class="bets-board">
+      {#each oddsBoard as bottle}
+        <div class="bets-bottle-row">
+          <div class="bets-bottle-info">
+            <span class="bets-bottle-icon">🍾</span>
+            <span class="bets-bottle-name">{bottle.bottle_title || bottle.bottle_id.slice(0, 8)}</span>
+          </div>
+          <div class="bets-odds-list">
+            {#each bottle.odds.slice(0, 4) as p}
+              <button class="bets-odds-btn" onclick={() => { bettingBottle = bottle; betTarget = p; betAmount = 0; betMsg = ''; }}>
+                <span class="bets-player-name">{p.display_name}{p.type === 'ai' ? ' 🤖' : ' 🧭'}</span>
+                <span class="bets-player-dist">{p.distance_km}km</span>
+                <span class="bets-odds-val">{p.odds.toFixed(1)}×</span>
+              </button>
+            {/each}
+          </div>
+        </div>
+      {/each}
+    </div>
+    {#if myBets.length > 0}
+      <div class="bets-history">
+        <h3 class="bets-history-title">{$t('bets.history')}</h3>
+        {#each myBets as bet}
+          <div class="bets-history-row">
+            <span class="bets-history-status" class:bets-won={bet.status === 'won'} class:bets-lost={bet.status === 'lost'} class:bets-open={bet.status === 'open'}>
+              {bet.status === 'won' ? '✅' : bet.status === 'lost' ? '❌' : '⏳'}
+            </span>
+            <span class="bets-history-detail">{bet.bet_on_name} — {bet.bottle_title?.slice(0, 20) || bet.bottle_id.slice(0, 8)}</span>
+            <span class="bets-history-amount">{bet.amount} @ {bet.odds.toFixed(1)}×</span>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  </div>
+</section>
+{/if}
+
+<!-- Bet Modal -->
+{#if bettingBottle && betTarget}
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Place bet" onclick={() => bettingBottle = null}>
+    <div class="bet-modal" onclick={(e) => e.stopPropagation()}>
+      <div class="bet-header">
+        <h3>📊 {$t('bets.title')}</h3>
+        <button class="modal-close" onclick={() => bettingBottle = null} aria-label="Close">✕</button>
+      </div>
+      <div class="bet-body">
+        <div class="bet-target">
+          <span class="bet-bottle-label">🍾 {bettingBottle.bottle_title || bettingBottle.bottle_id.slice(0, 8)}</span>
+          <span class="bet-on">→ {betTarget.display_name}{betTarget.type === 'ai' ? ' 🤖' : ' 🧭'} ({betTarget.distance_km}km)</span>
+          <span class="bet-odds-display">{betTarget.odds.toFixed(1)}×</span>
+        </div>
+        <div class="bet-amount-section">
+          <label class="bet-label">{$t('bets.your_bet')}</label>
+          <div class="bet-input-row">
+            <input type="number" class="bet-input" bind:value={betAmount} min="1" placeholder="0" />
+            <span class="bet-unit">⛽ fuel</span>
+          </div>
+          <div class="bet-preview">
+            <div class="bet-preview-row"><span>{$t('bets.odds')}</span><span>{betTarget.odds.toFixed(1)}×</span></div>
+            <div class="bet-preview-row"><span>{$t('bets.potential_win')}</span><span class="bet-win">⛽ {betAmount ? Math.floor(betAmount * betTarget.odds * 0.95) : 0}</span></div>
+            <div class="bet-preview-row"><span>{$t('bets.fee')}</span><span class="bet-fee">⛽ {betAmount ? Math.floor(betAmount * betTarget.odds * 0.05) : 0}</span></div>
+          </div>
+        </div>
+        {#if betMsg}
+          <p class="bet-msg" class:bet-success={betOk} class:bet-error={!betOk}>{betMsg}</p>
+        {/if}
+        <button class="bet-btn" onclick={placeBet} disabled={betting || !betAmount || betAmount < 1}>
+          {betting ? '...' : $t('bets.place_bet')}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <!-- Transfer Modal (Wise-style) -->
 {#if transferTarget}
@@ -904,6 +1024,51 @@
     .move-error { color: #ef4444; }
     .move-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); }
     .move-btn:disabled { opacity: 0.4; }
+    .bets-section { padding: 2rem 0 1rem; }
+    .bets-board { display: flex; flex-direction: column; gap: 1rem; }
+    .bets-bottle-row { background: var(--surface); border-radius: 10px; padding: 1rem; border: 1px solid var(--border); }
+    .bets-bottle-info { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .bets-bottle-icon { font-size: 1.2rem; }
+    .bets-bottle-name { font-weight: 600; font-size: 0.9rem; color: var(--fg); }
+    .bets-odds-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .bets-odds-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; cursor: pointer; font-family: var(--font-body); font-size: 0.8rem; color: var(--fg); display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+    .bets-odds-btn:hover { border-color: var(--accent); }
+    .bets-player-name { font-weight: 600; }
+    .bets-player-dist { color: var(--muted); font-size: 0.75rem; }
+    .bets-odds-val { color: var(--accent); font-weight: 700; }
+    .bets-history { margin-top: 1.5rem; }
+    .bets-history-title { font-size: 0.95rem; color: var(--fg); margin-bottom: 0.75rem; }
+    .bets-history-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; font-size: 0.82rem; border-bottom: 1px solid var(--border); }
+    .bets-history-status { font-size: 0.9rem; }
+    .bets-won { color: #4ade80; }
+    .bets-lost { color: #ef4444; }
+    .bets-open { color: var(--muted); }
+    .bets-history-detail { flex: 1; color: var(--muted); }
+    .bets-history-amount { color: var(--fg); font-weight: 600; }
+    .bet-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 380px; z-index: 10001; overflow: hidden; }
+    .bet-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .bet-header h3 { font-family: var(--font-heading); font-size: 1.05rem; margin: 0; color: var(--fg); }
+    .bet-body { padding: 1.25rem; }
+    .bet-target { text-align: center; padding: 0.75rem; background: var(--surface); border-radius: 8px; margin-bottom: 1rem; }
+    .bet-bottle-label { display: block; font-size: 0.85rem; color: var(--muted); }
+    .bet-on { display: block; font-size: 1rem; font-weight: 600; margin: 0.25rem 0; color: var(--fg); }
+    .bet-odds-display { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .bet-amount-section { margin-bottom: 1rem; }
+    .bet-label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .bet-input-row { display: flex; align-items: baseline; gap: 0.5rem; border: 2px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; }
+    .bet-input-row:focus-within { border-color: var(--accent); }
+    .bet-input { background: none; border: none; color: var(--fg); font-size: 1.5rem; font-weight: 700; width: 100%; outline: none; font-family: var(--font-body); -moz-appearance: textfield; }
+    .bet-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .bet-unit { color: var(--muted); font-size: 0.9rem; }
+    .bet-preview { background: var(--surface); border-radius: 8px; padding: 0.75rem; margin-top: 0.75rem; }
+    .bet-preview-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.2rem 0; color: var(--muted); }
+    .bet-win { color: #4ade80; font-weight: 700; }
+    .bet-fee { color: #ef4444; }
+    .bet-msg { font-size: 0.82rem; text-align: center; margin-bottom: 0.5rem; }
+    .bet-success { color: #4ade80; }
+    .bet-error { color: #ef4444; }
+    .bet-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); }
+    .bet-btn:disabled { opacity: 0.4; }
     .keywords-section { padding: 2rem 0 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
