@@ -44,5 +44,6 @@
   "bottles.log.time": "Hora",
   "bottles.log.coords": "Posición",
   "bottles.log.dist": "Paso",
-  "bottles.log.speed": "Velocidad"
+  "bottles.log.speed": "Velocidad",
+  "bottles.columns": "Columnas"
 }

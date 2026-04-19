@@ -8,6 +8,14 @@
   let activeBottle = $state(null);
   let activeBottleData = $state(null);
 
+  // Detail visibility toggles
+  let showDetails = $state({
+    author: true, type: true, launched: true, ago: true,
+    from: true, now: true, distance: true, speed: true,
+    status: true, driftLog: true
+  });
+  let showMenu = $state(false);
+
   function selectBottle(bottle) {
     activeBottle = activeBottle?.id === bottle.id ? null : bottle;
     activeBottleData = activeBottle?.id === bottle.id ? bottle : null;
@@ -333,7 +341,22 @@
 {#if data.bottles.length}
   <section class="bottles-section">
     <div class="container">
-      <h2 class="section-title">{$t('bottles.title')}</h2>
+      <div class="section-header">
+        <h2 class="section-title">{$t('bottles.title')}</h2>
+        <button class="btn-columns" onclick={() => showMenu = !showMenu}>
+          ⚙️ {$t('bottles.columns')}
+        </button>
+      </div>
+      {#if showMenu}
+        <div class="columns-menu">
+          {#each Object.entries(showDetails) as [key, val]}
+            <label class="col-toggle">
+              <input type="checkbox" checked={val} onchange={(e) => showDetails[key] = e.target.checked} />
+              <span>{$t('bottles.detail.' + key.replace(/([A-Z])/g, '_$1').toLowerCase())}</span>
+            </label>
+          {/each}
+        </div>
+      {/if}
       <div class="bottles-grid">
         {#each data.bottles as bottle}
           <button
@@ -349,33 +372,34 @@
             <p class="card-meta">{bottle.author_name || $t('bottles.anonymous')}</p>
             {#if activeBottleData?.id === bottle.id}
               <div class="card-detail">
-                <div class="detail-row"><span>{$t('bottles.detail.author')}</span><span>{bottle.author_name || $t('bottles.anonymous')}</span></div>
-                {#if bottle.content_type}
+                {#if showDetails.author}
+                  <div class="detail-row"><span>{$t('bottles.detail.author')}</span><span>{bottle.author_name || $t('bottles.anonymous')}</span></div>
+                {/if}
+                {#if showDetails.type && bottle.content_type}
                   <div class="detail-row"><span>{$t('bottles.detail.type')}</span><span class="type-tag">{contentTypeLabel(bottle.content_type)}</span></div>
                 {/if}
-                {#if bottle.launched_at}
+                {#if showDetails.launched && bottle.launched_at}
                   <div class="detail-row"><span>{$t('bottles.detail.launched')}</span><span>{formatDate(bottle.launched_at)}</span></div>
                 {/if}
-                {#if bottle.current_lat}
-                  <div class="detail-row"><span>{$t('bottles.detail.ago')}</span><span>{timeAgo(bottle.current_lat ? new Date(bottle.positions?.at(-1)?.recorded_at || bottle.launched_at) : null)}</span></div>
+                {#if showDetails.ago && bottle.current_lat}
+                  <div class="detail-row"><span>{$t('bottles.detail.ago')}</span><span>{timeAgo(new Date(bottle.positions?.at(-1)?.recorded_at || bottle.launched_at))}</span></div>
                 {/if}
-                {#if bottle.launch_lat}
+                {#if showDetails.from && bottle.launch_lat}
                   <div class="detail-row"><span>{$t('bottles.detail.from')}</span><span class="mono">{formatCoords(bottle.launch_lat, bottle.launch_lon)}</span></div>
                 {/if}
-                {#if bottle.current_lat}
+                {#if showDetails.now && bottle.current_lat}
                   <div class="detail-row"><span>{$t('bottles.detail.now')}</span><span class="mono">{formatCoords(bottle.current_lat, bottle.current_lon)}</span></div>
                 {/if}
-                {#if bottle.distance_km}
+                {#if showDetails.distance && bottle.distance_km}
                   <div class="detail-row"><span>{$t('bottles.detail.distance')}</span><span>{bottle.distance_km.toFixed(1)} km</span></div>
                 {/if}
-                {#if bottle.positions?.length > 1}
+                {#if showDetails.speed && bottle.positions?.length > 1}
                   <div class="detail-row"><span>{$t('bottles.detail.speed')}</span><span>{avgSpeed(bottle).toFixed(2)} km/h</span></div>
                 {/if}
-                <div class="detail-row">
-                  <span>{$t('bottles.detail.status')}</span>
-                  <span class="status-text status-{bottle.status}">{bottle.status}</span>
-                </div>
-                {#if bottle.positions?.length > 1}
+                {#if showDetails.status}
+                  <div class="detail-row"><span>{$t('bottles.detail.status')}</span><span class="status-text status-{bottle.status}">{bottle.status}</span></div>
+                {/if}
+                {#if showDetails.driftLog && bottle.positions?.length > 1}
                   <div class="drift-log">
                     <div class="drift-log-title">{$t('bottles.detail.drift_log')} ({bottle.positions.length} {$t('bottles.detail.steps')})</div>
                     <div class="drift-log-table">
@@ -485,6 +509,12 @@
     .drift-log-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap: 0.3rem; padding: 0.3rem 0.5rem; font-size: 0.72rem; border-top: 1px solid var(--border); color: var(--fg); }
     .drift-log-row:hover { background: var(--accent-dim); }
     .log-time { white-space: nowrap; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .btn-columns { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem 0.75rem; color: var(--muted); cursor: pointer; font-size: 0.82rem; font-family: var(--font-body); transition: color 0.2s, border-color 0.2s; }
+    .btn-columns:hover { color: var(--accent); border-color: var(--accent); }
+    .columns-menu { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .col-toggle { display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; color: var(--fg); cursor: pointer; }
+    .col-toggle input { accent-color: var(--accent); cursor: pointer; }
 
     @media (max-width: 640px) {
         .stats-bar { gap: 1rem; }
