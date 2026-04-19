@@ -281,8 +281,10 @@
 </svelte:head>
 
 <section class="hero">
-  <h1>🍾 {$t('hero.title')} <span>Quest</span></h1>
-  <p>{$t('hero.subtitle')}</p>
+  <div class="container">
+    <h1>🍾 {$t('hero.title')} <span>Quest</span></h1>
+    <p>{$t('hero.subtitle')}</p>
+  </div>
 </section>
 
 <!-- Stats -->
