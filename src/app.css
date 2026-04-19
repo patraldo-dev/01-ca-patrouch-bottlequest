@@ -248,9 +248,9 @@ html[data-theme="light"] .navbar {
 /* ─── Bottles ─── */
 .bottles-section { padding: 2rem 1.5rem 4rem; }
 .bottles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 .bottle-card {
     background: var(--surface);
