@@ -102,5 +102,13 @@
   "keywords.poison": "Mots Empoisonnés (bloqués pour Louisa May Albot)",
   "keywords.already_proposed": "Mot déployé pour aujourd'hui. Revenez demain.",
   "keywords.teaser_text": "Les mots-clés se forgent dans l'écriture. Publiez un texte sur Patrouch et vos mots entrent dans le pool caché — invisibles jusqu'à l'impact.",
-  "keywords.teaser_cta": "Écrire sur Patrouch →"
+  "keywords.teaser_cta": "Écrire sur Patrouch →",
+  "transfer.title": "Envoyer du Carburant",
+  "transfer.amount_label": "Montant",
+  "transfer.available": "Votre carburant",
+  "transfer.daily_limit": "Limite quotidienne (50%)",
+  "transfer.note_label": "Note (optionnelle)",
+  "transfer.note_placeholder": "Bonne chance...",
+  "transfer.fee_free": "Gratuit",
+  "transfer.send_btn": "Envoyer ⛽"
 }

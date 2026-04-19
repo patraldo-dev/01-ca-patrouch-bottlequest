@@ -24,6 +24,59 @@
   let proposing = $state(false);
   let proposalMsg = $state('');
   let proposalOk = $state(false);
+  let transferTarget = $state(null);
+  let transferAmount = $state(0);
+  let transferNote = $state('');
+  let transferMsg = $state('');
+  let transferOk = $state(false);
+  let transferring = $state(false);
+  let transferMax = $state(0);
+  let myFuel = $state(0);
+
+  async function openTransfer(target) {
+    transferTarget = target;
+    transferAmount = 0;
+    transferNote = '';
+    transferMsg = '';
+    transferring = false;
+    // Find my player
+    const me = data.players?.find(p => p.user_id && p.type === 'human');
+    myFuel = me?.fuel || 0;
+    transferMax = Math.floor(myFuel * 0.5);
+  }
+
+  async function sendTransfer() {
+    if (!transferTarget || !transferAmount) return;
+    transferring = true;
+    transferMsg = '';
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          to_player_id: transferTarget.id,
+          amount: transferAmount,
+          note: transferNote
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        transferMsg = `✅ ${data.message}`;
+        transferOk = true;
+        myFuel = data.remaining_fuel;
+        transferMax = data.daily_max - data.daily_used;
+        transferAmount = 0;
+      } else {
+        transferMsg = data.error;
+        transferOk = false;
+      }
+    } catch {
+      transferMsg = 'Connection error';
+      transferOk = false;
+    }
+    transferring = false;
+  }
 
   function selectBottle(bottle) {
     activeBottle = activeBottle?.id === bottle.id ? null : bottle;
@@ -423,11 +476,72 @@
           <span class="score-team" style="color:{p.team_color || '#ef4444'}">{p.type === 'human' ? (p.solo ? 'Solo' : p.team_name || '') : p.team_name || ''}</span>
           <span class="score-pts">⭐ {p.points || 0}</span>
           <span class="score-fuel">⛽ {p.fuel || 0}</span>
+          {#if p.type === 'human'}
+            <button class="btn-transfer" onclick={() => openTransfer(p)} aria-label="Transfer fuel to {p.display_name || p.username}">→</button>
+          {/if}
         </div>
       {/each}
     </div>
   </div>
 </section>
+
+<!-- Transfer Modal (Wise-style) -->
+{#if transferTarget}
+  <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Transfer fuel" onclick={() => transferTarget = null}>
+    <div class="transfer-modal" onclick={(e) => e.stopPropagation()}>
+      <div class="transfer-header">
+        <h3>⛽ {$t('transfer.title')}</h3>
+        <button class="modal-close" onclick={() => transferTarget = null} aria-label="Close">✕</button>
+      </div>
+      <div class="transfer-body">
+        <div class="transfer-recipient">
+          <div class="transfer-avatar">{transferTarget.type === 'ai' ? '🤖' : '👤'}</div>
+          <div class="transfer-recipient-info">
+            <span class="transfer-name">{transferTarget.display_name || transferTarget.username}</span>
+            <span class="transfer-team">{transferTarget.solo ? '👤 Solo' : transferTarget.team_name || 'Free Agent'}</span>
+          </div>
+        </div>
+        <div class="transfer-amount-section">
+          <label class="transfer-label">{$t('transfer.amount_label')}</label>
+          <div class="transfer-input-row">
+            <input type="number" class="transfer-input" bind:value={transferAmount} min="1" max={transferMax} placeholder="0" />
+            <span class="transfer-unit">⛽ fuel</span>
+          </div>
+          <div class="transfer-meta">
+            <span class="transfer-available">{$t('transfer.available')}: {myFuel} ⛽</span>
+            <span class="transfer-limit">{$t('transfer.daily_limit')}: {transferMax} ⛽</span>
+          </div>
+        </div>
+        <div class="transfer-note-section">
+          <label class="transfer-label">{$t('transfer.note_label')}</label>
+          <input type="text" class="transfer-note-input" bind:value={transferNote} maxlength="100" placeholder={$t('transfer.note_placeholder')} />
+        </div>
+        <div class="transfer-preview">
+          <div class="transfer-arrow">↓</div>
+          <div class="transfer-preview-row">
+            <span>You send</span>
+            <span class="transfer-preview-amount">{transferAmount || 0} ⛽</span>
+          </div>
+          <div class="transfer-arrow">↓</div>
+          <div class="transfer-preview-row">
+            <span>{transferTarget.display_name || transferTarget.username} receives</span>
+            <span class="transfer-preview-amount transfer-receive">{transferAmount || 0} ⛽</span>
+          </div>
+          <div class="transfer-fee-row">
+            <span>Fee</span>
+            <span class="transfer-free">{$t('transfer.fee_free')}</span>
+          </div>
+        </div>
+        {#if transferMsg}
+          <p class="transfer-msg" class:transfer-success={transferOk} class:transfer-error={!transferOk}>{transferMsg}</p>
+        {/if}
+        <button class="transfer-btn" onclick={sendTransfer} disabled={transferring || !transferAmount || transferAmount < 1}>
+          {transferring ? '...' : $t('transfer.send_btn')}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <!-- Keywords -->
 <section class="keywords-section" aria-labelledby="keywords-title">
@@ -610,6 +724,40 @@
     .score-team { font-size: 0.75rem; color: var(--muted); }
     .score-pts { font-weight: 700; color: var(--accent); }
     .score-fuel { color: var(--muted); font-size: 0.82rem; }
+    .btn-transfer { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 0.85rem; padding: 0.25rem 0.5rem; cursor: pointer; transition: all 0.2s; }
+    .btn-transfer:hover { border-color: var(--accent); color: var(--accent); }
+    .transfer-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 420px; z-index: 10001; overflow: hidden; }
+    .transfer-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .transfer-header h3 { font-family: var(--font-heading); font-size: 1.1rem; margin: 0; color: var(--fg); }
+    .transfer-body { padding: 1.5rem; }
+    .transfer-recipient { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding: 0.75rem; background: var(--surface); border-radius: 10px; }
+    .transfer-avatar { font-size: 1.5rem; }
+    .transfer-name { font-weight: 600; font-size: 0.95rem; color: var(--fg); }
+    .transfer-team { font-size: 0.75rem; color: var(--muted); }
+    .transfer-amount-section { margin-bottom: 1.25rem; }
+    .transfer-label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .transfer-input-row { display: flex; align-items: baseline; gap: 0.5rem; border: 2px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; transition: border-color 0.2s; }
+    .transfer-input-row:focus-within { border-color: var(--accent); }
+    .transfer-input { background: none; border: none; color: var(--fg); font-family: var(--font-body); font-size: 1.5rem; font-weight: 700; width: 100%; outline: none; -moz-appearance: textfield; }
+    .transfer-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .transfer-unit { font-size: 0.9rem; color: var(--muted); white-space: nowrap; }
+    .transfer-meta { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--muted); }
+    .transfer-note-section { margin-bottom: 1.25rem; }
+    .transfer-note-input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; color: var(--fg); font-family: var(--font-body); font-size: 0.85rem; outline: none; box-sizing: border-box; }
+    .transfer-note-input:focus { border-color: var(--accent); }
+    .transfer-preview { background: var(--surface); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem; }
+    .transfer-arrow { text-align: center; color: var(--muted); font-size: 0.8rem; }
+    .transfer-preview-row { display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.88rem; color: var(--fg); }
+    .transfer-preview-amount { font-weight: 700; }
+    .transfer-receive { color: #4ade80; }
+    .transfer-fee-row { display: flex; justify-content: space-between; padding: 0.35rem 0; font-size: 0.82rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 0.5rem; }
+    .transfer-free { color: #4ade80; font-weight: 600; }
+    .transfer-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 0.85rem; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: opacity 0.2s; }
+    .transfer-btn:hover:not(:disabled) { opacity: 0.9; }
+    .transfer-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .transfer-msg { font-size: 0.82rem; text-align: center; margin-bottom: 0.75rem; }
+    .transfer-success { color: #4ade80; }
+    .transfer-error { color: #ef4444; }
     .keywords-section { padding: 2rem 0 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
