@@ -3,6 +3,7 @@
     import { t, locale, getLocale } from '$lib/i18n';
     import { get } from 'svelte/store';
     import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
+    import '../app.css';
 
     let { children, data } = $props();
     let dark = $state(true);
