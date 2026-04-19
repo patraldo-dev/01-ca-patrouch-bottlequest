@@ -486,10 +486,12 @@
           >
             <div class="card-header">
               <span class="bottle-icon">{bottle.status === 'found' ? '📬' : bottle.status === 'beached' ? '🏖️' : '🍾'}</span>
+              <div class="card-info">
+                <h3>{bottle.title || $t('bottles.untitled')}</h3>
+                <p class="card-meta">{bottle.author_name || $t('bottles.anonymous')}{#if bottle.content_type} · {contentTypeLabel(bottle.content_type)}{/if}{#if bottle.distance_km} · {bottle.distance_km.toFixed(0)} km{/if}</p>
+              </div>
               <span class="status-dot status-{bottle.status}"></span>
             </div>
-            <h3>{bottle.title || $t('bottles.untitled')}</h3>
-            <p class="card-meta">{bottle.author_name || $t('bottles.anonymous')}</p>
             {#if activeBottleData?.id === bottle.id}
               <div class="card-detail">
                 {#if showDetails.author}
@@ -623,20 +625,26 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 1.25rem;
+        padding: 1rem 1.25rem;
+        width: 100%;
         text-align: left;
         cursor: pointer;
         transition: border-color 0.2s, box-shadow 0.2s;
         color: var(--fg);
         font-family: var(--font-body);
         font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
     .bottle-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
     .bottle-card.active { border-color: var(--accent); }
-    .bottle-card h3 { font-family: var(--font-heading); font-size: 1.1rem; margin: 0.5rem 0 0.25rem; }
-    .card-meta { color: var(--muted); font-size: 0.85rem; }
+    .bottle-card h3 { font-family: var(--font-heading); font-size: 1.05rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-meta { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: center; }
+    .card-header { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+    .card-info { min-width: 0; flex: 1; }
+    .card-info h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .bottle-icon { font-size: 1.5rem; }
 
     .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
