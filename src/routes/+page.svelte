@@ -410,6 +410,25 @@
   </section>
 {/if}
 
+<!-- Scoreboard -->
+<section class="scoreboard-section" aria-labelledby="scoreboard-title">
+  <div class="container">
+    <h2 class="section-title" id="scoreboard-title">🏆 {$t('scoreboard.title')}</h2>
+    <div class="scoreboard-list" role="list">
+      {#each [...data.players].sort((a, b) => (b.points || 0) - (a.points || 0)) as p, i}
+        <div class="score-row" role="listitem">
+          <span class="score-rank">{i + 1}</span>
+          <span class="score-type">{p.type === 'ai' ? '🤖' : p.solo ? '👤' : '👥'}</span>
+          <span class="score-name">{p.display_name || p.username}</span>
+          <span class="score-team" style="color:{p.team_color || '#ef4444'}">{p.type === 'human' ? (p.solo ? 'Solo' : p.team_name || '') : p.team_name || ''}</span>
+          <span class="score-pts">⭐ {p.points || 0}</span>
+          <span class="score-fuel">⛽ {p.fuel || 0}</span>
+        </div>
+      {/each}
+    </div>
+  </div>
+</section>
+
 <!-- Keywords -->
 <section class="keywords-section" aria-labelledby="keywords-title">
   <div class="container">
@@ -580,7 +599,18 @@
     .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
     /* Bottles section */
-    .keywords-section { padding: 2rem 1.5rem 1rem; }
+    .scoreboard-section { padding: 2rem 0 1rem; }
+    .scoreboard-list { display: flex; flex-direction: column; gap: 0.35rem; }
+    .score-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; background: var(--surface); border-radius: 6px; font-size: 0.88rem; border: 1px solid transparent; transition: border-color 0.2s; }
+    .score-row:hover { border-color: var(--border); }
+    .score-row:first-child { border-color: var(--accent); background: var(--accent-dim); }
+    .score-rank { font-weight: 700; color: var(--muted); width: 1.5rem; text-align: center; font-size: 0.8rem; }
+    .score-type { font-size: 1rem; }
+    .score-name { flex: 1; font-weight: 600; }
+    .score-team { font-size: 0.75rem; color: var(--muted); }
+    .score-pts { font-weight: 700; color: var(--accent); }
+    .score-fuel { color: var(--muted); font-size: 0.82rem; }
+    .keywords-section { padding: 2rem 0 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
     .kw-teaser { background: var(--accent-dim); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
