@@ -68,5 +68,8 @@
   "about.crypto_text": "Each bottle carries an encrypted message using a unique key. Only the finder can reveal the contents — protecting the intimacy of what was written.",
   "about.cta_title": "Ready to Launch?",
   "about.cta_text": "Head to patrouch.ca to write your message and send it to sea.",
-  "about.cta_btn": "Launch a Bottle →"
+  "about.cta_btn": "Launch a Bottle →",
+  "nav.label": "Main navigation",
+  "stats.label": "Bottle statistics",
+  "map.label": "Ocean drift map"
 }

@@ -25,7 +25,7 @@
     });
 </script>
 
-<nav class="navbar">
+<nav class="navbar" aria-label="{$t('nav.label')}">
     <div class="container">
         <a href="/" class="nav-brand">🍾 Bottle Quest</a>
         <div class="nav-links">
@@ -41,7 +41,7 @@
 
 {@render children()}
 
-<footer class="footer">
+<footer class="footer" role="contentinfo">
     <div class="container">
         <p>{$t('footer.text')} · <a href="https://patrouch.ca">{$t('footer.patrouch')}</a></p>
     </div>

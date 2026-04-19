@@ -280,7 +280,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 </svelte:head>
 
-<section class="hero">
+<section class="hero" aria-label="{$t('nav.map')}">
   <div class="container">
     <h1>🍾 {$t('hero.title')} <span>Quest</span></h1>
     <p>{$t('hero.subtitle')}</p>
@@ -289,7 +289,7 @@
 
 <!-- Stats -->
 <div class="container">
-  <div class="stats-bar">
+  <div class="stats-bar" role="status" aria-label="{$t('stats.label')}">
     <div class="stat-item">
       <span class="stat-num">{data.bottles.length}</span>
       <span class="stat-label">{$t('stats.active')}</span>
@@ -307,18 +307,18 @@
 
 <section class="map-section">
   <div class="container">
-    <div class="map-wrap">
-    <div id="ocean-map"></div>
+    <div class="map-wrap" role="application" aria-label="{$t('map.label')}">
+    <div id="ocean-map" aria-hidden="true"></div>
     </div>
   </div>
 </section>
 {#if playersWithDist.length}
-  <section class="players-section">
+  <section class="players-section" aria-labelledby="players-title">
     <div class="container">
-      <h2 class="section-title">{$t('players.title')}</h2>
+      <h2 class="section-title" id="players-title">{$t('players.title')}</h2>
       <div class="players-grid">
         {#each playersWithDist as player}
-          <button class="player-card" onclick={() => flyToPlayer(player)}>
+          <button class="player-card" onclick={() => flyToPlayer(player)} aria-label="{player.display_name || player.username}">
             <div class="player-header">
               <div class="player-avatar" style="background:{player.team_color || '#0d9488'}">
                 {player.team_id === 'team-alpha' ? '🧭' : '🐧'}
@@ -346,16 +346,16 @@
 
 <!-- Bottle list -->
 {#if data.bottles.length}
-  <section class="bottles-section">
+  <section class="bottles-section" aria-labelledby="bottles-title">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">{$t('bottles.title')}</h2>
-        <button class="btn-columns" onclick={() => showMenu = !showMenu}>
+        <h2 class="section-title" id="bottles-title">{$t('bottles.title')}</h2>
+        <button class="btn-columns" onclick={() => showMenu = !showMenu} aria-expanded={showMenu} aria-controls="columns-menu">
           ⚙️ {$t('bottles.columns')}
         </button>
       </div>
       {#if showMenu}
-        <div class="columns-menu">
+        <div class="columns-menu" id="columns-menu" role="group" aria-label="{$t('bottles.columns')}">
           {#each Object.entries(showDetails) as [key, val]}
             <label class="col-toggle">
               <input type="checkbox" checked={val} onchange={(e) => showDetails[key] = e.target.checked} />
@@ -370,6 +370,8 @@
             class="bottle-card"
             class:active={activeBottle?.id === bottle.id}
             onclick={() => selectBottle(bottle)}
+            aria-label="{bottle.title || $t('bottles.untitled')}"
+            aria-expanded={activeBottle?.id === bottle.id}
           >
             <div class="card-header">
               <span class="bottle-icon">{bottle.status === 'found' ? '📬' : bottle.status === 'beached' ? '🏖️' : '🍾'}</span>
@@ -409,7 +411,7 @@
                 {#if showDetails.driftLog && bottle.positions?.length > 1}
                   <div class="drift-log">
                     <div class="drift-log-title">{$t('bottles.detail.drift_log')} ({bottle.positions.length} {$t('bottles.detail.steps')})</div>
-                    <div class="drift-log-table">
+                    <div class="drift-log-table" role="table" aria-label="{$t('bottles.detail.drift_log')}">
                       <div class="drift-log-header">
                         <span>{$t('bottles.log.time')}</span>
                         <span>{$t('bottles.log.coords')}</span>

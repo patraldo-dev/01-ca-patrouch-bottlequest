@@ -68,5 +68,8 @@
   "about.crypto_text": "Cada botella lleva un mensaje encriptado con una clave única. Solo el descubridor puede revelar el contenido — protegiendo la intimidad de lo escrito.",
   "about.cta_title": "¿Listo para Lanzar?",
   "about.cta_text": "Ve a patrouch.ca para escribir tu mensaje y enviarlo al mar.",
-  "about.cta_btn": "Lanzar una Botella →"
+  "about.cta_btn": "Lanzar una Botella →",
+  "nav.label": "Navegación principal",
+  "stats.label": "Estadísticas de botellas",
+  "map.label": "Mapa de deriva oceánica"
 }

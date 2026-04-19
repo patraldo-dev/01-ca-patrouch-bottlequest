@@ -68,5 +68,8 @@
   "about.crypto_text": "Chaque bouteille porte un message chiffré avec une clé unique. Seul le découvreur peut révéler le contenu — protégeant l'intimité de ce qui a été écrit.",
   "about.cta_title": "Prêt à Lancer ?",
   "about.cta_text": "Rendez-vous sur patrouch.ca pour écrire votre message et l'envoyer en mer.",
-  "about.cta_btn": "Lancer une Bouteille →"
+  "about.cta_btn": "Lancer une Bouteille →",
+  "nav.label": "Navigation principale",
+  "stats.label": "Statistiques des bouteilles",
+  "map.label": "Carte de dérive océanique"
 }
