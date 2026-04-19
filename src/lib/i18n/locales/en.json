@@ -29,5 +29,14 @@
   "about.join.text": "Want to launch your own bottle? Sign up and add your message to the Pacific!",
   "lang.en": "EN",
   "lang.es": "ES",
-  "lang.fr": "FR"
+  "lang.fr": "FR",
+  "bottles.detail.author": "Author",
+  "bottles.detail.type": "Type",
+  "bottles.detail.launched": "Launched",
+  "bottles.detail.ago": "Last update",
+  "bottles.detail.from": "From",
+  "bottles.detail.now": "Current position",
+  "bottles.detail.distance": "Distance",
+  "bottles.detail.speed": "Avg speed",
+  "bottles.detail.status": "Status"
 }

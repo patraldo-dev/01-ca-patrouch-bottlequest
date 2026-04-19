@@ -29,6 +29,38 @@
     return `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`;
   }
 
+  function contentTypeLabel(type) {
+    const labels = {
+      short_story: 'Short Story', poem: 'Poem', screenplay: 'Screenplay',
+      video: 'Video', song: 'Song', lyrics: 'Lyrics', audiobook: 'Audiobook',
+      fanzine: 'Fanzine', illustrated_book: 'Illustrated Book'
+    };
+    return labels[type] || type;
+  }
+
+  function timeAgo(date) {
+    if (!date) return '';
+    const s = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (s < 60) return `${s}s ago`;
+    const m = Math.floor(s / 60);
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    return `${d}d ago`;
+  }
+
+  function avgSpeed(bottle) {
+    const pos = bottle.positions;
+    if (!pos || pos.length < 2) return 0;
+    let total = 0;
+    for (let i = 1; i < pos.length; i++) {
+      total += haversine(pos[i-1].lat, pos[i-1].lon, pos[i].lat, pos[i].lon);
+    }
+    const hours = (new Date(pos[pos.length-1].recorded_at) - new Date(pos[0].recorded_at)) / 3600000;
+    return hours > 0 ? total / hours : 0;
+  }
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -310,20 +342,30 @@
             <p class="card-meta">{bottle.author_name || $t('bottles.anonymous')}</p>
             {#if activeBottleData?.id === bottle.id}
               <div class="card-detail">
-                {#if bottle.launched_at}
-                  <div class="detail-row"><span>Launched</span><span>{formatDate(bottle.launched_at)}</span></div>
+                <div class="detail-row"><span>{$t('bottles.detail.author')}</span><span>{bottle.author_name || $t('bottles.anonymous')}</span></div>
+                {#if bottle.content_type}
+                  <div class="detail-row"><span>{$t('bottles.detail.type')}</span><span class="type-tag">{contentTypeLabel(bottle.content_type)}</span></div>
                 {/if}
-                {#if bottle.launch_lat}
-                  <div class="detail-row"><span>From</span><span class="mono">{formatCoords(bottle.launch_lat, bottle.launch_lon)}</span></div>
+                {#if bottle.launched_at}
+                  <div class="detail-row"><span>{$t('bottles.detail.launched')}</span><span>{formatDate(bottle.launched_at)}</span></div>
                 {/if}
                 {#if bottle.current_lat}
-                  <div class="detail-row"><span>Now</span><span class="mono">{formatCoords(bottle.current_lat, bottle.current_lon)}</span></div>
+                  <div class="detail-row"><span>{$t('bottles.detail.ago')}</span><span>{timeAgo(bottle.current_lat ? new Date(bottle.positions?.at(-1)?.recorded_at || bottle.launched_at) : null)}</span></div>
+                {/if}
+                {#if bottle.launch_lat}
+                  <div class="detail-row"><span>{$t('bottles.detail.from')}</span><span class="mono">{formatCoords(bottle.launch_lat, bottle.launch_lon)}</span></div>
+                {/if}
+                {#if bottle.current_lat}
+                  <div class="detail-row"><span>{$t('bottles.detail.now')}</span><span class="mono">{formatCoords(bottle.current_lat, bottle.current_lon)}</span></div>
                 {/if}
                 {#if bottle.distance_km}
-                  <div class="detail-row"><span>Distance</span><span>{bottle.distance_km.toFixed(1)} km</span></div>
+                  <div class="detail-row"><span>{$t('bottles.detail.distance')}</span><span>{bottle.distance_km.toFixed(1)} km</span></div>
+                {/if}
+                {#if bottle.positions?.length > 1}
+                  <div class="detail-row"><span>{$t('bottles.detail.speed')}</span><span>{avgSpeed(bottle).toFixed(2)} km/h</span></div>
                 {/if}
                 <div class="detail-row">
-                  <span>Status</span>
+                  <span>{$t('bottles.detail.status')}</span>
                   <span class="status-text status-{bottle.status}">{bottle.status}</span>
                 </div>
               </div>

@@ -29,5 +29,14 @@
   "about.join.text": "¿Quieres lanzar tu propia botella? ¡Regístrate y añade tu mensaje al Pacífico!",
   "lang.en": "EN",
   "lang.es": "ES",
-  "lang.fr": "FR"
+  "lang.fr": "FR",
+  "bottles.detail.author": "Autor",
+  "bottles.detail.type": "Tipo",
+  "bottles.detail.launched": "Lanzada",
+  "bottles.detail.ago": "Última actualización",
+  "bottles.detail.from": "Desde",
+  "bottles.detail.now": "Posición actual",
+  "bottles.detail.distance": "Distancia",
+  "bottles.detail.speed": "Vel. promedio",
+  "bottles.detail.status": "Estado"
 }

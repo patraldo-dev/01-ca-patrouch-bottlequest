@@ -29,5 +29,14 @@
   "about.join.text": "Vous voulez lancer votre propre bouteille ? Inscrivez-vous et ajoutez votre message au Pacifique !",
   "lang.en": "EN",
   "lang.es": "ES",
-  "lang.fr": "FR"
+  "lang.fr": "FR",
+  "bottles.detail.author": "Auteur",
+  "bottles.detail.type": "Type",
+  "bottles.detail.launched": "Lancée",
+  "bottles.detail.ago": "Dernière mise à jour",
+  "bottles.detail.from": "De",
+  "bottles.detail.now": "Position actuelle",
+  "bottles.detail.distance": "Distance",
+  "bottles.detail.speed": "Vit. moyenne",
+  "bottles.detail.status": "Statut"
 }
