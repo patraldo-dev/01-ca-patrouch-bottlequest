@@ -617,7 +617,7 @@
     .kw-recent { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
     .match-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; font-size: 0.85rem; }
     .kw-match-info { color: var(--muted); font-size: 0.78rem; }
-    .bottles-section { padding: 2rem 1.5rem 4rem; }
+    .bottles-section { padding: 2rem 0 4rem; }
     .section-title { font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent); margin-bottom: 1.25rem; }
     .bottles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
 
