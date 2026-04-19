@@ -100,5 +100,7 @@
   "keywords.today_pool": "Pool de Hoy",
   "keywords.recent_matches": "Impactos Confirmados",
   "keywords.poison": "Palabras Veneno (bloqueadas para Louisa May Albot)",
-  "keywords.already_proposed": "Palabra desplegada por hoy. Vuelve mañana."
+  "keywords.already_proposed": "Palabra desplegada por hoy. Vuelve mañana.",
+  "keywords.teaser_text": "Las palabras clave se forjan en la escritura. Publica un cuento en Patrouch y tus palabras entran al pool oculto — invisibles hasta que impactan.",
+  "keywords.teaser_cta": "Escribir en Patrouch →"
 }

@@ -417,16 +417,10 @@
       <h2 class="section-title" id="keywords-title">🔑 {$t('keywords.title')}</h2>
     </div>
     <p class="keywords-desc">{$t('keywords.desc')}</p>
-    <div class="kw-propose">
-      <input type="text" class="kw-input" bind:value={newKeyword} placeholder={$t('keywords.placeholder')} maxlength="30" />
-      <button class="btn-propose" onclick={proposeKeyword} disabled={proposing || todayProposed || !newKeyword.trim()}>{$t('keywords.propose')}</button>
+    <div class="kw-teaser">
+      <p class="kw-teaser-text">{$t('keywords.teaser_text')}</p>
+      <a href="https://patrouch.ca/write" class="btn-teaser" target="_blank" rel="noopener">{$t('keywords.teaser_cta')}</a>
     </div>
-    {#if proposalMsg}
-      <p class="kw-msg" class:kw-success={proposalOk} class:kw-error={!proposalOk}>{proposalMsg}</p>
-    {/if}
-    {#if todayProposed && !proposalMsg}
-      <p class="kw-msg kw-success">{$t('keywords.already_proposed')}</p>
-    {/if}
     {#if poisonWords.length > 0}
       <div class="kw-poison">
         <h3 class="kw-pool-label">☠️ {$t('keywords.poison')} ({poisonWords.length})</h3>
@@ -589,7 +583,10 @@
     .keywords-section { padding: 2rem 1.5rem 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
-    .kw-propose { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .kw-teaser { background: var(--accent-dim); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
+    .kw-teaser-text { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6; }
+    .btn-teaser { display: inline-block; background: var(--ocean); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; font-family: var(--font-body); transition: opacity 0.2s; }
+    .btn-teaser:hover { opacity: 0.85; }
     .kw-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; color: var(--fg); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
     .kw-input:focus { border-color: var(--accent); }
     .kw-input::placeholder { color: var(--muted); }

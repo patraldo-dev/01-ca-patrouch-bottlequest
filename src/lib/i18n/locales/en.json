@@ -100,5 +100,7 @@
   "keywords.today_pool": "Today's Pool",
   "keywords.recent_matches": "Confirmed Strikes",
   "keywords.poison": "Poison Words (blocked for Louisa May Albot)",
-  "keywords.already_proposed": "Word deployed for today. Come back tomorrow."
+  "keywords.already_proposed": "Word deployed for today. Come back tomorrow.",
+  "keywords.teaser_text": "Keywords are forged in writing. Publish a story on Patrouch and your words enter the hidden pool — invisible until they strike.",
+  "keywords.teaser_cta": "Write on Patrouch →"
 }

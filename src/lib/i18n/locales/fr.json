@@ -100,5 +100,7 @@
   "keywords.today_pool": "Pool du Jour",
   "keywords.recent_matches": "Impacts Confirmés",
   "keywords.poison": "Mots Empoisonnés (bloqués pour Louisa May Albot)",
-  "keywords.already_proposed": "Mot déployé pour aujourd'hui. Revenez demain."
+  "keywords.already_proposed": "Mot déployé pour aujourd'hui. Revenez demain.",
+  "keywords.teaser_text": "Les mots-clés se forgent dans l'écriture. Publiez un texte sur Patrouch et vos mots entrent dans le pool caché — invisibles jusqu'à l'impact.",
+  "keywords.teaser_cta": "Écrire sur Patrouch →"
 }
