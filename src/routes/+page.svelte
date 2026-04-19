@@ -16,7 +16,12 @@
   });
   let showMenu = $state(false);
   let keywords = $state([]);
-  let scanning = $state(false);
+  let proposals = $state([]);
+  let recentMatches = $state([]);
+  let newKeyword = $state('');
+  let proposing = $state(false);
+  let proposalMsg = $state('');
+  let proposalOk = $state(false);
 
   function selectBottle(bottle) {
     activeBottle = activeBottle?.id === bottle.id ? null : bottle;
@@ -83,19 +88,35 @@
     return map[status] || status;
   }
 
-  async function scanKeywords() {
-    scanning = true;
+  async function proposeKeyword() {
+    if (!newKeyword.trim()) return;
+    proposing = true;
+    proposalMsg = '';
     try {
-      const res = await fetch('/api/keywords', { method: 'POST' });
+      const res = await fetch('/api/keywords/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_id: 'human-default', word: newKeyword.trim() })
+      });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
-        const refresh = await fetch('/api/keywords');
+        proposalMsg = `"${data.word}" proposed! ⏳ Waiting for a match...`;
+        proposalOk = true;
+        newKeyword = '';
+        const refresh = await fetch('/api/keywords/proposals');
         if (refresh.ok) {
-          keywords = (await refresh.json()).available || [];
+          const r = await refresh.json();
+          proposals = r.proposals || [];
         }
+      } else {
+        proposalMsg = data.error || 'Error';
+        proposalOk = false;
       }
-    } catch {}
-    scanning = false;
+    } catch {
+      proposalMsg = 'Network error';
+      proposalOk = false;
+    }
+    proposing = false;
   }
 
   function statClick(type) {
@@ -144,12 +165,13 @@
   onMount(async () => {
     if (!browser) return;
 
-    // Load keywords
+    // Load proposals
     try {
-      const res = await fetch('/api/keywords');
+      const res = await fetch('/api/keywords/proposals');
       if (res.ok) {
         const data = await res.json();
-        keywords = data.available || [];
+        proposals = data.proposals || [];
+        recentMatches = data.matches || [];
       }
     } catch {}
 
@@ -388,20 +410,46 @@
   <div class="container">
     <div class="section-header">
       <h2 class="section-title" id="keywords-title">🔑 {$t('keywords.title')}</h2>
-      <button class="btn-scan" onclick={scanKeywords} disabled={scanning}>{$t('keywords.scan')}</button>
     </div>
     <p class="keywords-desc">{$t('keywords.desc')}</p>
-    {#if keywords.length > 0}
-      <div class="keywords-grid" role="list">
-        {#each keywords as kw}
-          <button class="keyword-pill" role="listitem" aria-label="{kw.word}: {$t('keywords.points_label')} {kw.points_value}">
-            {kw.word}
-            <span class="kw-points">+{kw.points_value}</span>
-          </button>
-        {/each}
+    <div class="kw-propose">
+      <input type="text" class="kw-input" bind:value={newKeyword} placeholder={$t('keywords.placeholder')} maxlength="30" />
+      <button class="btn-propose" onclick={proposeKeyword} disabled={proposing || !newKeyword.trim()}>{$t('keywords.propose')}</button>
+    </div>
+    {#if proposalMsg}
+      <p class="kw-msg" class:kw-success={proposalOk} class:kw-error={!proposalOk}>{proposalMsg}</p>
+    {/if}
+    {#if proposals.length > 0}
+      <div class="kw-pool">
+        <h3 class="kw-pool-label">{$t('keywords.today_pool')} ({proposals.length})</h3>
+        <div class="keywords-grid" role="list">
+          {#each proposals as kw}
+            <div class="keyword-pill" class:kw-matched={kw.status === 'matched'} role="listitem">
+              <span class="kw-type">{kw.player_type === 'ai' ? '🤖' : '👤'}</span>
+              <span class="kw-word">{kw.word}</span>
+              {#if kw.status === 'matched'}
+                <span class="kw-badge">✓ +{kw.points_earned}</span>
+              {:else}
+                <span class="kw-badge kw-pending">⏳</span>
+              {/if}
+              <span class="kw-author">{kw.display_name || kw.username}</span>
+            </div>
+          {/each}
+        </div>
       </div>
     {:else}
       <p class="keywords-empty">{$t('keywords.empty')}</p>
+    {/if}
+    {#if recentMatches.length > 0}
+      <div class="kw-recent">
+        <h3 class="kw-pool-label">{$t('keywords.recent_matches')}</h3>
+        {#each recentMatches as m}
+          <div class="match-row">
+            <span class="kw-word">{m.word}</span>
+            <span class="kw-match-info">✓ +{m.points_earned} — {m.writing_title || 'Untitled'}</span>
+          </div>
+        {/each}
+      </div>
     {/if}
   </div>
 </section>
@@ -538,15 +586,31 @@
     .keywords-section { padding: 2rem 1.5rem 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
-    .btn-scan { background: var(--ocean); color: #fff; border: none; border-radius: 6px; padding: 0.4rem 0.85rem; font-size: 0.82rem; cursor: pointer; font-family: var(--font-body); font-weight: 600; transition: opacity 0.2s; }
-    .btn-scan:hover { opacity: 0.85; }
-    .btn-scan:disabled { opacity: 0.5; cursor: not-allowed; }
+    .kw-propose { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .kw-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; color: var(--fg); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+    .kw-input:focus { border-color: var(--accent); }
+    .kw-input::placeholder { color: var(--muted); }
+    .btn-propose { background: var(--ocean); color: #fff; border: none; border-radius: 6px; padding: 0.5rem 1rem; font-size: 0.85rem; cursor: pointer; font-family: var(--font-body); font-weight: 600; transition: opacity 0.2s; }
+    .btn-propose:hover { opacity: 0.85; }
+    .btn-propose:disabled { opacity: 0.5; cursor: not-allowed; }
+    .kw-msg { font-size: 0.85rem; margin-bottom: 0.75rem; }
+    .kw-success { color: #4ade80; }
+    .kw-error { color: var(--accent); }
+    .kw-pool { margin-top: 0.5rem; }
+    .kw-pool-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
     .keywords-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .keyword-pill {
-      background: var(--accent-dim); border: 1px solid var(--border); border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.85rem; color: var(--fg); cursor: pointer; font-family: var(--font-body); display: flex; align-items: center; gap: 0.4rem; transition: border-color 0.2s, background 0.2s; }
-    .keyword-pill:hover { border-color: var(--accent); background: var(--ocean); color: #fff; }
-    .kw-points { font-size: 0.72rem; font-weight: 700; color: var(--accent); }
-    .keyword-pill:hover .kw-points { color: #fca5a5; }
+      background: var(--accent-dim); border: 1px solid var(--border); border-radius: 20px; padding: 0.35rem 0.75rem; font-size: 0.85rem; color: var(--fg); display: flex; align-items: center; gap: 0.4rem; transition: border-color 0.2s, background 0.2s;
+    }
+    .keyword-pill.kw-matched { border-color: #4ade80; background: rgba(74,222,128,0.1); }
+    .kw-type { font-size: 0.8rem; }
+    .kw-word { font-weight: 600; }
+    .kw-badge { font-size: 0.72rem; font-weight: 700; color: var(--accent); }
+    .kw-badge.kw-pending { color: var(--muted); }
+    .kw-author { font-size: 0.7rem; color: var(--muted); }
+    .kw-recent { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .match-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; font-size: 0.85rem; }
+    .kw-match-info { color: var(--muted); font-size: 0.78rem; }
     .bottles-section { padding: 2rem 1.5rem 4rem; }
     .section-title { font-family: var(--font-heading); font-size: 1.5rem; color: var(--accent); margin-bottom: 1.25rem; }
     .bottles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }

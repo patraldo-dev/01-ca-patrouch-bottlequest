@@ -90,9 +90,13 @@
   "players.fuel": "Carburant",
   "players.human": "👤 Humain",
   "players.ai": "🤖 IA",
-  "keywords.title": "Mots-Clés et Indices",
-  "keywords.desc": "Des mots cachés dans l'Agora qui vous donnent des points et du carburant.",
+  "keywords.title": "Bataille de Mots",
+  "keywords.desc": "Chaque joueur propose un mot-clé par jour. Quand un texte publié dans l'Agora contient ce mot, TOUS les humains marquent des points. L'IA joue aussi. Surpassez-la.",
   "keywords.scan": "Scanner l'Agora",
   "keywords.points_label": "points",
-  "keywords.empty": "Pas encore de mots-clés. Cliquez sur Scanner l'Agora pour extraire des indices."
+  "keywords.empty": "Pas encore de propositions aujourd'hui. Soyez le premier !",
+  "keywords.placeholder": "Votre mot-clé aujourd'hui...",
+  "keywords.propose": "Proposer",
+  "keywords.today_pool": "Pool du Jour",
+  "keywords.recent_matches": "Matches Récents"
 }

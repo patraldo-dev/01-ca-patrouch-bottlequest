@@ -90,9 +90,13 @@
   "players.fuel": "Fuel",
   "players.human": "👤 Human",
   "players.ai": "🤖 AI",
-  "keywords.title": "Keywords & Clues",
-  "keywords.desc": "Words hidden in the Agora that give you points and fuel to move across the ocean.",
+  "keywords.title": "Keyword Battle",
+  "keywords.desc": "Each player proposes one keyword per day. When a writer publishes something containing that keyword in the Agora, ALL humans score points. The AI plays too. Outsmart it.",
   "keywords.scan": "Scan Agora",
   "keywords.points_label": "points",
-  "keywords.empty": "No keywords yet. Click \"Scan Agora\" to extract clues from published writings."
+  "keywords.empty": "No proposals yet today. Be the first to propose a keyword!",
+  "keywords.placeholder": "Your keyword today...",
+  "keywords.propose": "Propose",
+  "keywords.today_pool": "Today's Pool",
+  "keywords.recent_matches": "Recent Matches"
 }

@@ -90,9 +90,13 @@
   "players.fuel": "Combustible",
   "players.human": "👤 Humano",
   "players.ai": "🤖 IA",
-  "keywords.title": "Palabras Clave y Pistas",
-  "keywords.desc": "Palabras ocultas en la Agora que te dan puntos y combustible para moverte por el océano.",
+  "keywords.title": "Batalla de Palabras",
+  "keywords.desc": "Cada jugador propone una palabra clave por día. Cuando un escritor publica algo que contiene esa palabra en la Agora, TODOS los humanos suman puntos. La IA también juega. Supérala.",
   "keywords.scan": "Escanear Agora",
   "keywords.points_label": "puntos",
-  "keywords.empty": "Sin palabras clave aún. Haz clic en \"Escanear Agora\" para extraer pistas."
+  "keywords.empty": "Sin propuestas aún hoy. ¡Sé el primero en proponer una palabra clave!",
+  "keywords.placeholder": "Tu palabra clave hoy...",
+  "keywords.propose": "Proponer",
+  "keywords.today_pool": "Pool de Hoy",
+  "keywords.recent_matches": "Matches Recientes"
 }
