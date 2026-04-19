@@ -2,7 +2,7 @@
   "nav.map": "Carte",
   "nav.about": "À propos",
   "hero.title": "Bottle",
-  "hero.subtitle": "Lancez des bouteilles dans l'océan Pacifique et suivez leur dérive grâce aux données réelles des courants océaniques.",
+  "hero.subtitle": "Surpassez l'IA. Suivez les mots. Réclamez la bouteille.",
   "stats.active": "Bouteilles actives",
   "stats.beached": "Échouées",
   "stats.found": "Trouvées",
@@ -85,5 +85,9 @@
   "help.tip_1": "Les messages sont chiffrés — seul le découvreur peut les lire",
   "help.tip_2": "Différents types de contenu : histoires, poèmes, chansons et plus",
   "help.tip_3": "Utilisez le sélecteur de colonnes pour personnaliser les détails affichés",
-  "help.more": "En savoir plus sur la page À Propos"
+  "help.more": "En savoir plus sur la page À Propos",
+  "players.points": "Points",
+  "players.fuel": "Carburant",
+  "players.human": "👤 Humain",
+  "players.ai": "🤖 IA"
 }

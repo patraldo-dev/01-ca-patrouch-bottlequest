@@ -32,6 +32,7 @@ export async function load({ platform }) {
     try {
         const { results: pr } = await db.prepare(`
             SELECT p.id, p.username, p.display_name, p.lat, p.lon, p.port_id,
+                   p.type, p.points, p.fuel,
                    t.name as team_name, t.color as team_color, pt.name as port_name
             FROM bq_players p
             LEFT JOIN bq_teams t ON p.team_id = t.id

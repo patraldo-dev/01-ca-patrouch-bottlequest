@@ -253,7 +253,7 @@
       playerMarkers.push([player.lat, player.lon]);
       const icon = L.divIcon({
         className: 'player-marker',
-        html: `<div style="background:${player.team_color || '#ef4444'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer" title="${player.display_name || player.username}">${player.team_id === 'team-alpha' ? '🧭' : '🐧'}</div>`,
+        html: `<div style="background:${player.team_color || '#ef4444'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer" title="${player.display_name || player.username}">${player.type === 'ai' ? '🤖' : '🧭'}</div>`,
         iconSize: [32, 32],
         iconAnchor: [16, 16]
       });
@@ -335,13 +335,15 @@
                 {player.team_id === 'team-alpha' ? '🧭' : '🐧'}
               </div>
               <div class="player-info">
-                <h3>{player.display_name || player.username}</h3>
-                <span class="team-badge" style="background:{player.team_color || '#ef4444'}22;color:{player.team_color || '#ef4444'}">{player.team_name || 'Free Agent'}</span>
+                <h3>{player.display_name || player.username} {player.type === 'ai' ? '🤖' : '👤'}</h3>
+                <span class="team-badge" style="background:{player.team_color || '#ef4444'}22;color:{player.team_color || '#ef4444'}">{player.type === 'ai' ? '🤖 AI' : '👤 Human'} · {player.team_name || 'Free Agent'}</span>
               </div>
             </div>
             <div class="player-details">
               <div class="detail-row"><span>📍 {$t('players.port')}</span><span>{player.port_name || 'Unknown'}</span></div>
               <div class="detail-row"><span>🌐 {$t('players.position')}</span><span class="mono">{formatCoords(player.lat, player.lon)}</span></div>
+              <div class="detail-row"><span>⭐ {$t('players.points')}</span><span>{player.points || 0}</span></div>
+              <div class="detail-row"><span>⛽ {$t('players.fuel')}</span><span>{player.fuel || 0}</span></div>
               {#if player.nearestDist !== null}
                 <button class="bottle-link" onclick={(e) => { e.stopPropagation(); flyToBottle(player.nearestBottle); }}>
                   🍾 {$t('players.nearest')}: {player.nearestDist.toFixed(0)} km

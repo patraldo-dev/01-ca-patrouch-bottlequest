@@ -2,7 +2,7 @@
   "nav.map": "Mapa",
   "nav.about": "Acerca de",
   "hero.title": "Bottle",
-  "hero.subtitle": "Lanza botellas al Océano Pacífico y rastrea su deriva usando datos reales de corrientes oceánicas.",
+  "hero.subtitle": "Supera a la IA. Sigue las palabras. Reclama la botella.",
   "stats.active": "Botellas activas",
   "stats.beached": "Varadas",
   "stats.found": "Encontradas",
@@ -85,5 +85,9 @@
   "help.tip_1": "Los mensajes están encriptados — solo el descubridor puede leerlos",
   "help.tip_2": "Diferentes tipos de contenido: cuentos, poemas, canciones y más",
   "help.tip_3": "Usa el selector de columnas para personalizar los detalles que ves",
-  "help.more": "Lee más en la página Acerca de"
+  "help.more": "Lee más en la página Acerca de",
+  "players.points": "Puntos",
+  "players.fuel": "Combustible",
+  "players.human": "👤 Humano",
+  "players.ai": "🤖 IA"
 }
