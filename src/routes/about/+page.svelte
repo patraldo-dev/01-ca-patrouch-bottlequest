@@ -132,7 +132,7 @@
     }
     .btn-cta {
         display: inline-block;
-        background: var(--accent);
+        background: var(--ocean);
         color: #fff;
         padding: 0.6rem 1.5rem;
         border-radius: 8px;

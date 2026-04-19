@@ -5,10 +5,10 @@
     --surface: #141417;
     --border: #27272a;
     --fg: #e4e4e7;
-    --muted: #71717a;
+    --muted: #a1a1aa;
     --accent: #0d9488;
     --accent-dim: rgba(13,148,136,0.15);
-    --ocean: #064e3b;
+    --ocean: #134e4a;
     --ocean-light: #2dd4bf;
     --font-heading: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', -apple-system, sans-serif;
@@ -231,7 +231,7 @@ html[data-theme="light"] .navbar {
 .detail-row .mono { font-family: monospace; font-size: 0.8rem; }
 .bottle-link {
     margin-top: 0.5rem;
-    background: var(--accent);
+    background: var(--ocean);
     color: #fff;
     border: none;
     padding: 0.35rem 0.75rem;
