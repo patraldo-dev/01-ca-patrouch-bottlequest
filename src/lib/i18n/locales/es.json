@@ -71,5 +71,19 @@
   "about.cta_btn": "Lanzar una Botella →",
   "nav.label": "Navegación principal",
   "stats.label": "Estadísticas de botellas",
-  "map.label": "Mapa de deriva oceánica"
+  "map.label": "Mapa de deriva oceánica",
+  "help.title": "Cómo Funciona Bottle Quest",
+  "help.close": "Cerrar",
+  "help.what_title": "¿Qué es Bottle Quest?",
+  "help.what_text": "Un juego de escritura creativa donde lanzas botellas virtuales al Océano Pacífico y rastreas su deriva usando datos reales de corrientes. Juega en solitario, forma equipos o compite.",
+  "help.how_title": "Inicio Rápido",
+  "help.how_1": "Visita patrouch.ca/games/bottles para crear y lanzar botellas",
+  "help.how_2": "Las corrientes oceánicas mueven las botellas cada 6 horas automáticamente",
+  "help.how_3": "Rastrea posiciones, distancia y velocidad en el mapa",
+  "help.how_4": "Las botellas que encallan pueden ser descubiertas y abiertas",
+  "help.tips_title": "Consejos",
+  "help.tip_1": "Los mensajes están encriptados — solo el descubridor puede leerlos",
+  "help.tip_2": "Diferentes tipos de contenido: cuentos, poemas, canciones y más",
+  "help.tip_3": "Usa el selector de columnas para personalizar los detalles que ves",
+  "help.more": "Lee más en la página Acerca de"
 }

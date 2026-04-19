@@ -71,5 +71,19 @@
   "about.cta_btn": "Lancer une Bouteille →",
   "nav.label": "Navigation principale",
   "stats.label": "Statistiques des bouteilles",
-  "map.label": "Carte de dérive océanique"
+  "map.label": "Carte de dérive océanique",
+  "help.title": "Comment Fonctionne Bottle Quest",
+  "help.close": "Fermer",
+  "help.what_title": "Qu'est-ce que Bottle Quest ?",
+  "help.what_text": "Un jeu d'écriture créative où vous lancez des bouteilles virtuelles dans l'océan Pacifique et suivez leur dérive grâce aux données réelles des courants. Jouez en solo, formez des équipes ou participez aux tournois.",
+  "help.how_title": "Démarrage Rapide",
+  "help.how_1": "Visitez patrouch.ca/games/bottles pour créer et lancer des bouteilles",
+  "help.how_2": "Les courants déplacent les bouteilles toutes les 6 heures automatiquement",
+  "help.how_3": "Suivez les positions, la distance et la vitesse sur la carte",
+  "help.how_4": "Les bouteilles échouées peuvent être découvertes et ouvertes",
+  "help.tips_title": "Conseils",
+  "help.tip_1": "Les messages sont chiffrés — seul le découvreur peut les lire",
+  "help.tip_2": "Différents types de contenu : histoires, poèmes, chansons et plus",
+  "help.tip_3": "Utilisez le sélecteur de colonnes pour personnaliser les détails affichés",
+  "help.more": "En savoir plus sur la page À Propos"
 }

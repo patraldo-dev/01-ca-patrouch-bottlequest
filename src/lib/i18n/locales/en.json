@@ -71,5 +71,19 @@
   "about.cta_btn": "Launch a Bottle →",
   "nav.label": "Main navigation",
   "stats.label": "Bottle statistics",
-  "map.label": "Ocean drift map"
+  "map.label": "Ocean drift map",
+  "help.title": "How Bottle Quest Works",
+  "help.close": "Close",
+  "help.what_title": "What is Bottle Quest?",
+  "help.what_text": "A creative writing game where you launch virtual bottles into the Pacific Ocean and track their drift using real current data. Play solo, form teams, or compete.",
+  "help.how_title": "Quick Start",
+  "help.how_1": "Visit patrouch.ca/games/bottles to create and launch bottles",
+  "help.how_2": "Ocean currents move bottles every 6 hours automatically",
+  "help.how_3": "Track positions, distance, and speed on the map",
+  "help.how_4": "Bottles that beach can be discovered and opened",
+  "help.tips_title": "Tips",
+  "help.tip_1": "Messages are encrypted — only the finder can read them",
+  "help.tip_2": "Different content types: stories, poems, songs, and more",
+  "help.tip_3": "Use the column toggle to customize what details you see",
+  "help.more": "Read more on the About page"
 }
