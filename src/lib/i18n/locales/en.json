@@ -101,8 +101,8 @@
   "keywords.recent_matches": "Confirmed Strikes",
   "keywords.poison": "Poison Words (blocked for Louisa May Albot)",
   "keywords.already_proposed": "Word deployed for today. Come back tomorrow.",
-  "keywords.teaser_text": "Keywords are forged in writing. Publish a story on Patrouch.ca and your words enter the hidden pool — invisible until they strike.",
-  "keywords.teaser_cta": "Write on Patrouch →",
+  "keywords.teaser_text": "Choose a word from your published writing on Patrouch.ca to deploy it into the hidden pool. When it surfaces in any Agora story, you earn double points. Your words are invisible until they strike — pure cooperation among humans.",
+  "keywords.teaser_cta": "Choose a Keyword →",
   "transfer.title": "Send Fuel",
   "transfer.amount_label": "Amount",
   "transfer.available": "Your fuel",
@@ -149,5 +149,16 @@
   "events.calm": "⚓ Dead Calm",
   "events.wind": "🌬️ Favorable Wind",
   "events.flotsam": "🎁 Flotsam Found",
-  "events.pirates": "🏴‍☠️ Pirate Raid"
+  "events.pirates": "🏴‍☠️ Pirate Raid",
+  "keywords.info_title": "How Keywords Work",
+  "keywords.info_contribute": "Choose a word from your published writing. One keyword per writing, one per day.",
+  "keywords.info_double": "When someone else uses YOUR word in their Agora story, you earn DOUBLE points.",
+  "keywords.info_coop": "All humans share a cooperative bonus when any human keyword matches.",
+  "keywords.info_no_self": "No points from your own word in your own writing.",
+  "keywords.info_decay": "Words decay: 50% value per match. They never expire, just lose force.",
+  "keywords.info_my_words": "My Keywords",
+  "keywords.info_times_scored": "times scored",
+  "keywords.info_last_match": "Last match",
+  "keywords.info_current_value": "Current value",
+  "bottles.launched_by": "Launched by"
 }

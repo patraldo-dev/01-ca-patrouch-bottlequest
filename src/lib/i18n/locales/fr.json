@@ -101,8 +101,8 @@
   "keywords.recent_matches": "Impacts Confirmés",
   "keywords.poison": "Mots Empoisonnés (bloqués pour Louisa May Albot)",
   "keywords.already_proposed": "Mot déployé pour aujourd'hui. Revenez demain.",
-  "keywords.teaser_text": "Les mots-clés se forgent dans l'écriture. Publiez un texte sur Patrouch et vos mots entrent dans le pool caché — invisibles jusqu'à l'impact.",
-  "keywords.teaser_cta": "Écrire sur Patrouch →",
+  "keywords.teaser_text": "Choisissez un mot de votre texte publié sur Patrouch.ca pour le déployer dans le pool caché. Quand il apparaît dans une histoire de l'Agora, vous gagnez des points doubles. Vos mots sont invisibles jusqu'à l'impact — pure coopération entre humains.",
+  "keywords.teaser_cta": "Choisir un Mot-Clé →",
   "transfer.title": "Envoyer du Carburant",
   "transfer.amount_label": "Montant",
   "transfer.available": "Votre carburant",
@@ -149,5 +149,16 @@
   "events.calm": "⚓ Calme Plat",
   "events.wind": "🌬️ Vent Favorable",
   "events.flotsam": "🎁 Épave Flottante",
-  "events.pirates": "🏴‍☠️ Raid Pirate"
+  "events.pirates": "🏴‍☠️ Raid Pirate",
+  "keywords.info_title": "Comment Fonctionnent les Mots-Clés",
+  "keywords.info_contribute": "Choisissez un mot de votre texte publié. Un mot-clé par écrit, un par jour.",
+  "keywords.info_double": "Quand quelqu'un d'autre utilise VOTRE mot dans son histoire de l'Agora, vous gagnez des POINTS DOUBLES.",
+  "keywords.info_coop": "Tous les humains partagent un bonus coopératif quand un mot-clé humain correspond.",
+  "keywords.info_no_self": "Pas de points de votre propre mot dans votre propre écrit.",
+  "keywords.info_decay": "Les mots décroissent : 50% de valeur par correspondance. Ils n'expirent jamais, perdent juste de la force.",
+  "keywords.info_my_words": "Mes Mots-Clés",
+  "keywords.info_times_scored": "fois marqués",
+  "keywords.info_last_match": "Dernière correspondance",
+  "keywords.info_current_value": "Valeur actuelle",
+  "bottles.launched_by": "Lancée par"
 }

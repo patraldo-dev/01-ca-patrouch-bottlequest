@@ -101,8 +101,8 @@
   "keywords.recent_matches": "Impactos Confirmados",
   "keywords.poison": "Palabras Veneno (bloqueadas para Louisa May Albot)",
   "keywords.already_proposed": "Palabra desplegada por hoy. Vuelve mañana.",
-  "keywords.teaser_text": "Las palabras clave se forjan en la escritura. Publica un cuento en Patrouch y tus palabras entran al pool oculto — invisibles hasta que impactan.",
-  "keywords.teaser_cta": "Escribir en Patrouch →",
+  "keywords.teaser_text": "Elige una palabra de tu escritura publicada en Patrouch.ca para desplegarla en el pool oculto. Cuando aparezca en cualquier historia del Ágora, ganas puntos dobles. Tus palabras son invisibles hasta que impactan — pura cooperación entre humanos.",
+  "keywords.teaser_cta": "Elegir una Palabra Clave →",
   "transfer.title": "Enviar Combustible",
   "transfer.amount_label": "Monto",
   "transfer.available": "Tu combustible",
@@ -149,5 +149,16 @@
   "events.calm": "⚓ Calma Chicha",
   "events.wind": "🌬️ Viento a Favor",
   "events.flotsam": "🎁 Escombros Flotantes",
-  "events.pirates": "🏴‍☠️ Incursión Pirata"
+  "events.pirates": "🏴‍☠️ Incursión Pirata",
+  "keywords.info_title": "Cómo Funcionan las Palabras Clave",
+  "keywords.info_contribute": "Elige una palabra de tu escritura publicada. Una palabra clave por escritura, una por día.",
+  "keywords.info_double": "Cuando alguien más usa TU palabra en su historia del Ágora, ganas PUNTOS DOBLES.",
+  "keywords.info_coop": "Todos los humanos comparten un bonus cooperativo cuando cualquier palabra clave humana coincide.",
+  "keywords.info_no_self": "Sin puntos de tu propia palabra en tu propia escritura.",
+  "keywords.info_decay": "Las palabras decaen: 50% de valor por coincidencia. Nunca expiran, solo pierden fuerza.",
+  "keywords.info_my_words": "Mis Palabras Clave",
+  "keywords.info_times_scored": "veces anotadas",
+  "keywords.info_last_match": "Última coincidencia",
+  "keywords.info_current_value": "Valor actual",
+  "bottles.launched_by": "Lanzada por"
 }

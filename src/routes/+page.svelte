@@ -46,6 +46,7 @@
   let betMsg = $state('');
   let betOk = $state(false);
   let betting = $state(false);
+  let kwInfoOpen = $state(false);
 
   async function openTransfer(target) {
     transferTarget = target;
@@ -796,8 +797,28 @@
     <p class="keywords-desc">{$t('keywords.desc')}</p>
     <div class="kw-teaser">
       <p class="kw-teaser-text">{$t('keywords.teaser_text')}</p>
-      <a href="https://patrouch.ca/write" class="btn-teaser" target="_blank" rel="noopener">{$t('keywords.teaser_cta')}</a>
+      <div class="kw-teaser-actions">
+        <a href="https://patrouch.ca/write" class="btn-teaser" target="_blank" rel="noopener">{$t('keywords.teaser_cta')}</a>
+        <button class="btn-info" onclick={() => kwInfoOpen = true}>ℹ️</button>
+      </div>
     </div>
+    {#if kwInfoOpen}
+      <div class="modal-overlay" role="dialog" aria-modal="true" onclick={() => kwInfoOpen = false}>
+        <div class="kw-info-modal" onclick={(e) => e.stopPropagation()}>
+          <div class="kw-info-header">
+            <h3>🔑 {$t('keywords.info_title')}</h3>
+            <button class="modal-close" onclick={() => kwInfoOpen = false}>✕</button>
+          </div>
+          <div class="kw-info-body">
+            <div class="kw-info-item"><span class="kw-info-icon">📝</span><p>{$t('keywords.info_contribute')}</p></div>
+            <div class="kw-info-item kw-highlight"><span class="kw-info-icon">⭐</span><p>{$t('keywords.info_double')}</p></div>
+            <div class="kw-info-item"><span class="kw-info-icon">🤝</span><p>{$t('keywords.info_coop')}</p></div>
+            <div class="kw-info-item"><span class="kw-info-icon">🚫</span><p>{$t('keywords.info_no_self')}</p></div>
+            <div class="kw-info-item"><span class="kw-info-icon">📉</span><p>{$t('keywords.info_decay')}</p></div>
+          </div>
+        </div>
+      </div>
+    {/if}
     {#if poisonWords.length > 0}
       <div class="kw-poison">
         <h3 class="kw-pool-label">☠️ {$t('keywords.poison')} ({poisonWords.length})</h3>
@@ -1072,6 +1093,17 @@
     .keywords-section { padding: 2rem 0 1rem; }
     .keywords-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
     .keywords-empty { color: var(--muted); font-size: 0.85rem; }
+    .kw-teaser-actions { display: flex; justify-content: center; gap: 0.5rem; align-items: center; }
+    .btn-info { background: var(--surface); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9rem; transition: border-color 0.2s; }
+    .btn-info:hover { border-color: var(--accent); }
+    .kw-info-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 440px; z-index: 10001; overflow: hidden; }
+    .kw-info-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .kw-info-header h3 { font-family: var(--font-heading); font-size: 1.1rem; margin: 0; color: var(--fg); }
+    .kw-info-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .kw-info-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+    .kw-info-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+    .kw-info-item p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .kw-highlight p { color: var(--accent); font-weight: 600; }
     .kw-teaser { background: var(--accent-dim); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
     .kw-teaser-text { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6; }
     .btn-teaser { display: inline-block; background: var(--ocean); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; font-family: var(--font-body); transition: opacity 0.2s; }
