@@ -162,5 +162,6 @@
   "keywords.info_current_value": "Valeur actuelle",
   "bottles.launched_by": "Lancée par",
   "stats.pursuit": "En Poursuite",
-  "scoreboard.title": "Classement"
+  "scoreboard.title": "Classement",
+  "stats.checkin": "Pointer"
 }

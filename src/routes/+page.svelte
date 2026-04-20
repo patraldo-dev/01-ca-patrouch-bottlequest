@@ -47,6 +47,9 @@
   let betMsg = $state('');
   let betOk = $state(false);
   let betting = $state(false);
+  let checkedIn = $state(false);
+  let checkinStreak = $state(0);
+  let checkinLoading = $state(false);
   let kwInfoOpen = $state(false);
 
   async function openTransfer(target) {
@@ -131,6 +134,30 @@
       moveOk = false;
     }
     moveConfirm = false;
+  }
+
+  async function loadCheckin() {
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/checkin', { credentials: 'include' });
+      const d = await res.json();
+      checkedIn = d.checkedIn;
+      checkinStreak = d.streak || 0;
+    } catch {}
+  }
+
+  async function doCheckin() {
+    if (checkedIn || checkinLoading) return;
+    checkinLoading = true;
+    try {
+      const res = await fetch('https://patrouch.ca/api/bottlequest/checkin', { method: 'POST', credentials: 'include' });
+      const d = await res.json();
+      if (d.success) {
+        checkedIn = true;
+        checkinStreak++;
+        sounds.bet_won();
+      }
+    } catch {}
+    checkinLoading = false;
   }
 
   async function loadBets() {
@@ -480,6 +507,7 @@
   });
 
   // Load betting data
+  loadCheckin();
   loadBets();
 </script>
 
@@ -543,6 +571,10 @@
     <button class="stat-item" aria-label="{$t('stats.pursuit')}" style="border-left: 1px solid var(--border);">
       <span class="stat-num">{data.playersInPursuit}</span>
       <span class="stat-label">{$t('stats.pursuit')}</span>
+    </button>
+    <button class="stat-item stat-checkin" class:stat-checked={checkedIn} onclick={() => doCheckin()} disabled={checkedIn || checkinLoading} aria-label="Check in">
+      <span class="stat-num">{checkinStreak > 0 ? checkinStreak + '🔥' : '✋'}</span>
+      <span class="stat-label">{checkedIn ? '✓' : $t('stats.checkin')}</span>
     </button>
   </div>
 </div>
@@ -986,6 +1018,9 @@
     .stat-item:hover { background: var(--accent-dim); }
     .stat-num { display: block; font-family: var(--font-heading); font-size: 2rem; color: var(--accent); font-weight: 700; }
     .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-checkin { border-left: 1px solid var(--border); cursor: pointer; }
+    .stat-checkin:disabled { cursor: default; }
+    .stat-checked .stat-num { color: #4ade80; }
 
     /* Bottles section */
     .scoreboard-section { padding: 2rem 0 1rem; }

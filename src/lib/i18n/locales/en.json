@@ -162,5 +162,6 @@
   "keywords.info_current_value": "Current value",
   "bottles.launched_by": "Launched by",
   "stats.pursuit": "In Pursuit",
-  "scoreboard.title": "Scoreboard"
+  "scoreboard.title": "Scoreboard",
+  "stats.checkin": "Check In"
 }
