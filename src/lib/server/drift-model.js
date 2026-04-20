@@ -57,6 +57,14 @@ function lat2rad(lat) { return lat * Math.PI / 180; }
 function checkCoast(lat, lon) {
     const coasts = [
         // [name, lat, lon, threshold_km]
+        // Bay of Banderas surrounds
+        ['Punta Mita', 20.71, -105.54, 0.3],
+        ['Nuevo Vallarta', 20.72, -105.29, 0.2],
+        ['Puerto Vallarta Malecon', 20.65, -105.23, 0.15],
+        ['Cabo Corrientes', 19.53, -105.22, 0.3],
+        ['Yelapa', 20.47, -105.40, 0.2],
+        ['Boca de Tomatlan', 20.50, -105.36, 0.2],
+        // Rest of Pacific coast
         ['Baja California North', 28, -114, 0.8],
         ['Baja California South', 24, -110, 1.0],
         ['Baja California Tip', 23, -110, 0.8],
