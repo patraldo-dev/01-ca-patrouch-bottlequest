@@ -92,15 +92,18 @@ function checkCoast(lat, lon) {
 
     for (const [name, clat, clon, threshold] of coasts) {
         const d = haversine(lat, lon, clat, clon);
+        // Always track closest distance for display
+        if (d < minDist) {
+            minDist = d;
+        }
         // Scale threshold by latitude (degrees shrink at poles)
         const scaledThreshold = threshold / Math.cos(lat2rad(Math.abs(clat)));
-        if (d < scaledThreshold * 15 && d < minDist) { // 15x = beach buffer in km
-            minDist = d;
+        if (d < scaledThreshold * 15) { // 15x = beach buffer in km
             closest = { name, distanceKm: d, thresholdKm: scaledThreshold * 15 };
         }
     }
 
-    if (closest && minDist < closest.thresholdKm) {
+    if (closest) {
         return { beached: false, coast: closest.name, distanceKm: minDist, approaching: true };
     }
 
